@@ -19,7 +19,7 @@ export default class App extends Component {
                 xmlns="http://www.w3.org/2000/svg" 
                 xmlnsXlink="http://www.w3.org/1999/xlink"
             >
-                <MainNode>Here is main node</MainNode>
+                <MainNode>Here is main nodeHere is main nodeHere is main node</MainNode>
             </svg>            
         );
     }

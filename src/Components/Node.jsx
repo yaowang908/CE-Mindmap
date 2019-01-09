@@ -5,6 +5,10 @@ export default class Node extends Component {
     constructor(props) {
         super(props);
         this.generatePath = this.generatePath.bind(this);
+        this.nodeHolder = React.createRef();
+        this.textHolder = React.createRef();
+        this.nodeBG = React.createRef();
+        this.nodeText = React.createRef();
         this.state = {
             width: 100,
             height: 50,
@@ -46,26 +50,43 @@ export default class Node extends Component {
             fontSize: this.props.fontSize ? this.props.fontSize : this.state.fontSize,
             textColor: this.props.textColor ? this.props.textColor : this.state.textColor
         });
-
     }
 
+    componentDidMount() {
+
+        // let bbox = this.nodeText.current.getBBox();
+        // let textWidth = bbox.width;
+        // let textHeight = bbox.height;
+        if(this.nodeText.current) {
+            let bbox = this.nodeText.current.getBBox();
+            let textWidth = bbox.width;
+            let textHeight = bbox.height;
+            this.setState({
+                width: textWidth,
+                height: textHeight+10,
+                // transform: ` translate(-${textWidth / 2} -${(textHeight/2)})`
+            });
+        }
+        
+    }
+    
     render() {
         return (
-            <g>
+            <g transform={this.state.transform}>
                 <path 
                     d={this.generatePath()}
                     fill={this.state.fillColor}
                     stroke={this.state.strokeColor}
-                    transform={this.state.transform}
-                    ref="nodeFrame"
+                    ref={this.nodeBG}
                     //TODO: adjusting path width to text width
                 />
-                <g transform={`translate(${this.state.startX},${this.state.startY+this.state.width/2})`+this.state.transform} fill={this.state.textColor}>
-                    <text fontSize={this.state.fontSize} y={"-9"} ref="nodeText">
+                <g transform={`translate(${this.state.startX},${this.state.startY + this.state.height+ 10})`} 
+                   fill={this.state.textColor} ref={this.textHolder}
+                >
+                    <text fontSize={this.state.fontSize} y={"-9"} ref={this.nodeText}>
                         {this.state.text}
                     </text> 
                 </g>
-                
             </g>
             
         );
