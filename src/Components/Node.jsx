@@ -54,17 +54,17 @@ export default class Node extends Component {
 
     componentDidMount() {
 
-        // let bbox = this.nodeText.current.getBBox();
-        // let textWidth = bbox.width;
-        // let textHeight = bbox.height;
         if(this.nodeText.current) {
+            //adjust path width to text width
             let bbox = this.nodeText.current.getBBox();
             let textWidth = bbox.width;
             let textHeight = bbox.height;
             this.setState({
                 width: textWidth,
                 height: textHeight+10,
-                // transform: ` translate(-${textWidth / 2} -${(textHeight/2)})`
+                transform: `
+                            translate(-${textWidth / 2} -${(textHeight + 10)/ 2})
+                            `
             });
         }
         
@@ -78,7 +78,6 @@ export default class Node extends Component {
                     fill={this.state.fillColor}
                     stroke={this.state.strokeColor}
                     ref={this.nodeBG}
-                    //TODO: adjusting path width to text width
                 />
                 <g transform={`translate(${this.state.startX},${this.state.startY + this.state.height+ 10})`} 
                    fill={this.state.textColor} ref={this.textHolder}
