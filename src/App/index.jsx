@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import MainNode from "../Components/MainNode.jsx";
 import Node from "../Components/Node";
 import styled from "styled-components";
-import PopupMenu from "../Components/PopupMenu.jsx";
+import PopupMenu from "../Components/PopupMenu/PopupMenu.jsx";
 
 const MainContainer =styled.div`
     width: 100%;
