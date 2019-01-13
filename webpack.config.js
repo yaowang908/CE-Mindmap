@@ -62,7 +62,7 @@ module.exports = {
     devServer: {
         stats: 'errors-only',
         // contentBase: './dist', //index.html is not here
-        host: 'localhost',
+        host: '0.0.0.0',
         port: 3000
     },
     optimization: {
