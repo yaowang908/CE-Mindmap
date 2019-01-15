@@ -4,6 +4,7 @@ export default class Sectors extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            id:"",
             containerWidth: 400,
             radius: 125,
             fillColor: "rgb(115,161,191)",
@@ -15,6 +16,7 @@ export default class Sectors extends Component {
 
     componentWillMount() {
         this.setState({
+            id: this.props.id ? this.props.id : this.state.id,
             containerWidth: this.props.containerWidth ? this.props.containerWidth : this.state.containerWidth,
             radius: this.props.radius ? this.props.radius: this.state.radius,
             fillColor: this.props.fillColor ? this.props.fillColor : this.state.fillColor,
@@ -40,15 +42,17 @@ export default class Sectors extends Component {
     render(){
         return (
             <g
-                transform={this.state.transform}>
+                transform={this.state.transform}
+                id={this.state.id}    
+            >
                 <path
                     d={this.circleSectorMenuPath()}
                     fill={this.state.fillColor}
                     stroke={this.state.strokeColor}
                 />
                 <g transform={this.state.textTransform}>
-                    <text x="200" y="200" dx="50" dy="-50" class="small">Move</text>
-                    <text x="200" y="200" dx="50" dy="-30" class="small">Down</text>
+                    {/* <text x="200" y="200" dx="50" dy="-50" class="small">Move</text>
+                    <text x="200" y="200" dx="50" dy="-30" class="small">Down</text> */}
                 </g>
                 {this.props.children}
             </g>
