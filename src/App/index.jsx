@@ -39,13 +39,12 @@ export default class App extends Component {
 
     render() {
         return (
-            <MainContainer>
+            <MainContainer onClick={this._onClick}>
                 <PopupMenu display={this.state.popupMenuDisplay} 
                             left={this.state.popupMenuOffsetX}
                             top={this.state.popupMenuOffsetY}
                 ></PopupMenu>
                 <svg
-                    onClick={this._onClick}
                     id="mind_map"
                     width="100%"
                     height="100%" 
