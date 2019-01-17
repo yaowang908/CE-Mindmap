@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const TextContainer = styled.span`
     width: 75px;
-    height: 75px;
+    height: auto;
     font-family: 'Staatliches', cursive;
     font-size: 1.5em;
     color: #fff;

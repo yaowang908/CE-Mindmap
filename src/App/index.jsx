@@ -14,16 +14,38 @@ const MainContainer =styled.div`
 export default class App extends Component {
     constructor(props) {
         super(props);
+        this._onClick = this._onClick.bind(this);
         this.state = {
-
+            popupMenuDisplay: "none",
+            popupMenuOffsetX: 0,
+            popupMenuOffsetY: 0
         }
+    }
+
+    _onClick(e) {
+        console.log(e.nativeEvent.offsetX);
+        console.log(e.nativeEvent.offsetY);
+        this.setState({
+            popupMenuOffsetX: e.nativeEvent.offsetX,
+            popupMenuOffsetY: e.nativeEvent.offsetY,
+            popupMenuDisplay: this.state.popupMenuDisplay === "none" ? "block" : "none"
+        });
+        console.log(this.state.popupMenuDisplay);
+    }
+
+    componentWillMount() {
+
     }
 
     render() {
         return (
             <MainContainer>
-                <PopupMenu></PopupMenu>
-                <svg 
+                <PopupMenu display={this.state.popupMenuDisplay} 
+                            left={this.state.popupMenuOffsetX}
+                            top={this.state.popupMenuOffsetY}
+                ></PopupMenu>
+                <svg
+                    onClick={this._onClick}
                     id="mind_map"
                     width="100%"
                     height="100%" 

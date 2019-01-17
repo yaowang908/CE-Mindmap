@@ -6,9 +6,9 @@ import SectorText from "./SectorText.jsx";
 const PopupMenuContainer = styled.div`
     width: 400px;
     height: 400px;
-    border: 1px #bfbfbf solid;
+    // border: 1px #bfbfbf solid;
     position: absolute;
-    // left: 200px;
+    // display: none;
 `; 
 
 const MainMenuContainer = styled.div`
@@ -34,17 +34,86 @@ const InnerMenuContainer = styled.div`
 export default class PopupMenu extends Component {
     constructor(props){
         super(props);
+        this.hide = this.hide.bind(this);
+        this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
         this.state= {
             containerWidth: 400, 
             radius: 125,
             fillColor: "rgb(115,161,191)",
-            strokeColor: "rgb(57,80,96)"
+            strokeColor: "rgb(57,80,96)",
+            display: "none",
+            left: 0,
+            top: 0,
+            windowWidth: window.innerWidth,
+            windowHeight: window.innerHeight
         }
+    }
+
+    hide() {
+        console.log('Now!');
+        this.setState({
+            display: "none"
+        });
+    }
+
+    componentDidMount() {
+        this.updateWindowDimensions();
+        window.addEventListener('resize', this.updateWindowDimensions);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateWindowDimensions);
+    }
+
+    updateWindowDimensions() {
+        this.setState({ windowWidth: window.innerWidth, windowHeight: window.innerHeight });
+    }
+
+    horizontalBorder(propsLeft) {
+        let pointToLeft = propsLeft - this.state.containerWidth / 2;
+        if (propsLeft < this.state.radius ) {
+            //left exceeded
+            return this.state.radius - this.state.containerWidth / 2;
+        } else if (this.state.windowWidth - propsLeft < this.state.radius ) {
+            //right exceeded
+            return this.state.windowWidth - this.state.radius - this.state.containerWidth / 2;
+        } else {
+            return pointToLeft;
+        }
+    }
+
+    verticalBorder(propsTop) {
+        let pointToTop = propsTop - this.state.containerWidth / 2;
+        if (propsTop < this.state.radius) {
+            //top exceeded
+            return this.state.radius - this.state.containerWidth / 2;
+        } else if (this.state.windowHeight - propsTop < this.state.radius) {
+            //bottom exceeded
+            return (this.state.windowHeight - this.state.radius - this.state.containerWidth / 2);
+        } else {
+            return pointToTop;
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            display: nextProps.display ? nextProps.display : this.state.display,
+            left: nextProps.left ? this.horizontalBorder(nextProps.left) : this.state.left,
+            top: nextProps.top ? this.verticalBorder(nextProps.top) : this.state.top
+        });
     }
 
     render() {
         return(
-            <PopupMenuContainer > 
+            <PopupMenuContainer 
+                style={{ 
+                        "display": this.state.display, 
+                        "left": this.state.left, 
+                        "top": this.state.top,
+                        "z-index":"1000"
+                    }}
+                onClick={this.hide}
+            > 
                 <SectorText anchorID="popup_menu_0" transform="translate(185px,185px)" color="rgb(115, 161, 191)">
                     Edit
                 </SectorText>
