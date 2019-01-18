@@ -20,7 +20,9 @@ export default class Node extends Component {
             transform:"",
             text:"",
             fontSize:"1em",
-            textColor:"#fff"
+            textColor:"#fff",
+            childID:"",
+            childClassName:""
         }
     }
 
@@ -48,7 +50,9 @@ export default class Node extends Component {
             transform: this.props.transform ? this.props.transform : this.state.transform,
             text: this.props.text ? this.props.text : this.state.text,
             fontSize: this.props.fontSize ? this.props.fontSize : this.state.fontSize,
-            textColor: this.props.textColor ? this.props.textColor : this.state.textColor
+            textColor: this.props.textColor ? this.props.textColor : this.state.textColor,
+            childID: this.props.childID ? this.props.childID : this.state.childID,
+            childClassName: this.props.childClassName ? this.props.childClassName : this.state.childClassName
         });
     }
 
@@ -72,7 +76,7 @@ export default class Node extends Component {
     
     render() {
         return (
-            <g transform={this.state.transform}>
+            <g transform={this.state.transform} id={this.state.childID} className={this.state.childClassName}> 
                 <path 
                     d={this.generatePath()}
                     fill={this.state.fillColor}

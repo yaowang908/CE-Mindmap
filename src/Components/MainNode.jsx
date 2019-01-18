@@ -17,9 +17,9 @@ export default class MainNode extends Node {
         `;
     }
 
-    render(){
+    render(){ 
         return(
-            <Node startX={window.innerWidth/2} startY={window.innerHeight/2} width={this.state.width} height={this.state.height} transform={this.transformFormula()} text={this.props.children}/>
+            <Node childClassName={"mainNode"} childID={"001"} startX={window.innerWidth/2} startY={window.innerHeight/2} width={this.state.width} height={this.state.height} transform={this.transformFormula()} text={this.props.children}/>
         );
     }
 } 

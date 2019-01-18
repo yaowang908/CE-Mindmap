@@ -23,14 +23,17 @@ export default class App extends Component {
     }
 
     _onClick(e) {
-        console.log(e.nativeEvent.offsetX);
-        console.log(e.nativeEvent.offsetY);
+        // console.log(e.nativeEvent.offsetX);
+        // console.log(e.nativeEvent.offsetY);
         this.setState({
             popupMenuOffsetX: e.nativeEvent.offsetX,
             popupMenuOffsetY: e.nativeEvent.offsetY,
             popupMenuDisplay: this.state.popupMenuDisplay === "none" ? "block" : "none"
         });
-        console.log(this.state.popupMenuDisplay);
+        // console.log(this.state.popupMenuDisplay);
+
+        let element = document.elementFromPoint(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+        console.dir(element);
     }
 
     componentWillMount() {
