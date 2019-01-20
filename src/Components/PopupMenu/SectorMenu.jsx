@@ -31,7 +31,7 @@ export default class Sectors extends Component {
         let radius = this.state.radius;
 
         return `
-            M ${ halfContainerWidth + radius * Math.cos(60 * Math.PI / 180)},${halfContainerWidth - radius * Math.sin(60 * Math.PI / 180)}
+            M ${ radius + radius * Math.cos(60 * Math.PI / 180)},${radius - radius * Math.sin(60 * Math.PI / 180)}
             q ${ radius - radius * Math.cos(60 * Math.PI / 180)},${radius * Math.sin(60 * Math.PI / 180) - radius * Math.tan(30 * Math.PI / 180)}
               ${ radius - radius * Math.cos(60 * Math.PI / 180)},${radius * Math.sin(60 * Math.PI / 180)}
             h -${ radius}

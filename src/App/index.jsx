@@ -23,17 +23,21 @@ export default class App extends Component {
     }
 
     _onClick(e) {
-        // console.log(e.nativeEvent.offsetX);
-        // console.log(e.nativeEvent.offsetY);
-        this.setState({
-            popupMenuOffsetX: e.nativeEvent.offsetX,
-            popupMenuOffsetY: e.nativeEvent.offsetY,
-            popupMenuDisplay: this.state.popupMenuDisplay === "none" ? "block" : "none"
-        });
-        // console.log(this.state.popupMenuDisplay);
-
         let element = document.elementFromPoint(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-        console.dir(element);
+        if(element.nodeName === "path") {//clicked on node
+            this.setState({
+                popupMenuOffsetX: e.nativeEvent.offsetX,//clicked position abscissa
+                popupMenuOffsetY: e.nativeEvent.offsetY,//ordinate
+                popupMenuDisplay: this.state.popupMenuDisplay = "block"
+            });
+        } else {//clicked on svg container
+            if(this.state.popupMenuDisplay === "block") {//hide popup menu when click on empty space
+                this.setState({
+                    popupMenuDisplay: "none"
+                });
+            }
+        }
+        console.dir(element.nodeName);
     }
 
     componentWillMount() {
@@ -42,13 +46,14 @@ export default class App extends Component {
 
     render() {
         return (
-            <MainContainer onClick={this._onClick}>
+            <MainContainer>
                 <PopupMenu display={this.state.popupMenuDisplay} 
                             left={this.state.popupMenuOffsetX}
                             top={this.state.popupMenuOffsetY}
                 ></PopupMenu>
                 <svg
                     id="mind_map"
+                    onClick={this._onClick}
                     width="100%"
                     height="100%" 
                     xmlns="http://www.w3.org/2000/svg" 

@@ -34,6 +34,7 @@ const InnerMenuContainer = styled.div`
 export default class PopupMenu extends Component {
     constructor(props){
         super(props);
+        this.popupMenuOnClick = this.popupMenuOnClick.bind(this);
         this.hide = this.hide.bind(this);
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
         this.state= {
@@ -49,11 +50,17 @@ export default class PopupMenu extends Component {
         }
     }
 
-    hide() {
-        console.log('Now!');
+    hide(e) {
+        console.dir(e.target);
         this.setState({
             display: "none"
         });
+    }
+
+    popupMenuOnClick(e) {
+        console.log("Inner click");
+        let element = document.elementFromPoint(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+        console.dir(element);
     }
 
     componentDidMount() {
@@ -114,24 +121,26 @@ export default class PopupMenu extends Component {
                     }}
                 onClick={this.hide}
             > 
-                <SectorText anchorID="popup_menu_0" transform="translate(185px,185px)" color="rgb(115, 161, 191)">
+                <SectorText onClick={this.popupMenuOnClick} anchorID="popup_menu_0" transform="translate(185px,185px)" color="rgb(115, 161, 191)">
                     Edit
                 </SectorText>
 
-                <SectorText anchorID="popup_menu_1" transform="translate(255px,126px)">Add Upper</SectorText>
-                <SectorText anchorID="popup_menu_2" transform="translate(170px,106px)">Move Up</SectorText>
-                <SectorText anchorID="popup_menu_3" transform="translate(95px,126px)">Add Sibling</SectorText>
-                <SectorText anchorID="popup_menu_4" transform="translate(95px,226px)">Delete</SectorText>
-                <SectorText anchorID="popup_menu_5" transform="translate(180px,257px)">Move Down</SectorText>
-                <SectorText anchorID="popup_menu_6" transform="translate(250px,216px)">Add Lower</SectorText>
+                <SectorText onClick={this.popupMenuOnClick} anchorID="popup_menu_1" transform="translate(255px,126px)">Add Upper</SectorText>
+                <SectorText  onClick={this.popupMenuOnClick} anchorID="popup_menu_2" transform="translate(170px,106px)">Move Up</SectorText>
+                <SectorText  onClick={this.popupMenuOnClick} anchorID="popup_menu_3" transform="translate(95px,126px)">Add Sibling</SectorText>
+                <SectorText  onClick={this.popupMenuOnClick} anchorID="popup_menu_4" transform="translate(95px,226px)">Delete</SectorText>
+                <SectorText  onClick={this.popupMenuOnClick} anchorID="popup_menu_5" transform="translate(180px,257px)">Move Down</SectorText>
+                <SectorText  onClick={this.popupMenuOnClick} anchorID="popup_menu_6" transform="translate(250px,216px)">Add Lower</SectorText>
 
-                <svg style={{"position":"absolute","width":"100%","height":"100%;"}}>
+                <svg style={{"position":"absolute","width":"250px","height":"250px","top":"75px","left":"75px"}}
+                        viewBox="0 0 250 250"
+                >
                     <Sectors id="popup_menu_1"></Sectors>
-                    <Sectors id="popup_menu_2" transform="rotate(-60,200,200)" textTransform="rotate(60,200,100)"></Sectors>
-                    <Sectors id="popup_menu_3" transform="rotate(-120,200,200)"></Sectors>
-                    <Sectors id="popup_menu_4" transform="rotate(-180,200,200)" fillColor="#f44b42" ></Sectors>
-                    <Sectors id="popup_menu_5" transform="rotate(120,200,200)" ></Sectors>
-                    <Sectors id="popup_menu_6" transform="rotate(60,200,200)" ></Sectors>
+                    <Sectors id="popup_menu_2" transform="rotate(-60,125,125)"></Sectors>
+                    <Sectors id="popup_menu_3" transform="rotate(-120,125,125)"></Sectors>
+                    <Sectors id="popup_menu_4" transform="rotate(-180,125,125)" fillColor="#f44b42" ></Sectors>
+                    <Sectors id="popup_menu_5" transform="rotate(120,125,125)" ></Sectors>
+                    <Sectors id="popup_menu_6" transform="rotate(60,125,125)" ></Sectors>
                     
                 </svg>
                 <MainMenuContainer>

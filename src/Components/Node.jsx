@@ -86,7 +86,12 @@ export default class Node extends Component {
                 <g transform={`translate(${this.state.startX},${this.state.startY + this.state.height+ 10})`} 
                    fill={this.state.textColor} ref={this.textHolder}
                 >
-                    <text fontSize={this.state.fontSize} y={"-9"} ref={this.nodeText} fontFamily={"'Open Sans', sans-serif"}>
+                    <text fontSize={this.state.fontSize} 
+                            y={"-9"} 
+                            ref={this.nodeText} 
+                            fontFamily={"'Open Sans', sans-serif"}
+                            style={{"pointerEvents":"none"}}
+                    >
                         {this.state.text}
                     </text> 
                 </g>

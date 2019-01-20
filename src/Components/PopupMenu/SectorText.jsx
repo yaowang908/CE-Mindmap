@@ -5,7 +5,7 @@ const TextContainer = styled.span`
     width: 75px;
     height: auto;
     font-family: 'Staatliches', cursive;
-    font-size: 1.5em;
+    font-size: 23px;
     color: #fff;
     position: absolute;
     z-index: 300;
