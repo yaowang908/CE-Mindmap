@@ -3,6 +3,7 @@ import React, { Component } from "react";
 export default class Sectors extends Component {
     constructor(props) {
         super(props);
+        this._onClickSector = this._onClickSector.bind(this);
         this.state = {
             id:"",
             containerWidth: 400,
@@ -11,6 +12,35 @@ export default class Sectors extends Component {
             strokeColor: "rgb(57,80,96)",
             transform: "rotate(0,200,200)",
             textTransform:""
+        }
+    }
+
+    _onClickSector(e) {
+        let elementID = e.nativeEvent.target.parentElement.id;
+        let element = e.nativeEvent.target.tagName;
+        if (element = "path") {
+            //click on sector menu
+            switch(elementID) {
+                case 'popup_menu_1':
+                    console.log("Add upper");
+                    break;
+                case 'popup_menu_2':
+                    console.log("Move Up");
+                    break;
+                case 'popup_menu_3':
+                    console.log("add sibling");
+                    break;
+                case 'popup_menu_4':
+                    console.log("DELETE");
+                    // TODO: double confirm
+                    break;
+                case 'popup_menu_5':
+                    console.log("Move Down");
+                    break;
+                case 'popup_menu_6':
+                    console.log("Add Lower");
+                    break;
+            }
         }
     }
 
@@ -43,7 +73,8 @@ export default class Sectors extends Component {
         return (
             <g
                 transform={this.state.transform}
-                id={this.state.id}    
+                id={this.state.id}
+                onClick={this._onClickSector}    
             >
                 <path
                     d={this.circleSectorMenuPath()}

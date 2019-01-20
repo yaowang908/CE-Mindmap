@@ -33,7 +33,13 @@ export default class SectorText extends Component{
 
     render() {
         return (
-            <TextContainer id={this.state.anchorID + '_text'} style={{"transform":this.state.transform,"color":this.state.color}}>
+            <TextContainer id={this.state.anchorID + '_text'} 
+                            style={{
+                                    "transform":this.state.transform,
+                                    "color":this.state.color,
+                                    "pointer-events":"none"
+                                   }}
+            >
                 {this.props.children}
             </TextContainer>
         );

@@ -34,9 +34,9 @@ const InnerMenuContainer = styled.div`
 export default class PopupMenu extends Component {
     constructor(props){
         super(props);
-        this.popupMenuOnClick = this.popupMenuOnClick.bind(this);
         this.hide = this.hide.bind(this);
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+        this._editOnClick = this._editOnClick.bind(this);
         this.state= {
             containerWidth: 400, 
             radius: 125,
@@ -51,16 +51,18 @@ export default class PopupMenu extends Component {
     }
 
     hide(e) {
-        console.dir(e.target);
-        this.setState({
-            display: "none"
-        });
+        if (e.nativeEvent.target.localName === "svg" ) {//hide popup menu when click outside sector menus
+            this.setState({
+                display: "none"
+            });
+        }
     }
 
-    popupMenuOnClick(e) {
-        console.log("Inner click");
-        let element = document.elementFromPoint(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-        console.dir(element);
+    _editOnClick(e){
+        let elementID = e.nativeEvent.target.id;
+        if (elementID = "popup_menu_0") {
+            console.log("Edit");
+        }
     }
 
     componentDidMount() {
@@ -121,16 +123,16 @@ export default class PopupMenu extends Component {
                     }}
                 onClick={this.hide}
             > 
-                <SectorText onClick={this.popupMenuOnClick} anchorID="popup_menu_0" transform="translate(185px,185px)" color="rgb(115, 161, 191)">
+                <SectorText  anchorID="popup_menu_0" transform="translate(185px,185px)" color="rgb(115, 161, 191)">
                     Edit
                 </SectorText>
 
-                <SectorText onClick={this.popupMenuOnClick} anchorID="popup_menu_1" transform="translate(255px,126px)">Add Upper</SectorText>
-                <SectorText  onClick={this.popupMenuOnClick} anchorID="popup_menu_2" transform="translate(170px,106px)">Move Up</SectorText>
-                <SectorText  onClick={this.popupMenuOnClick} anchorID="popup_menu_3" transform="translate(95px,126px)">Add Sibling</SectorText>
-                <SectorText  onClick={this.popupMenuOnClick} anchorID="popup_menu_4" transform="translate(95px,226px)">Delete</SectorText>
-                <SectorText  onClick={this.popupMenuOnClick} anchorID="popup_menu_5" transform="translate(180px,257px)">Move Down</SectorText>
-                <SectorText  onClick={this.popupMenuOnClick} anchorID="popup_menu_6" transform="translate(250px,216px)">Add Lower</SectorText>
+                <SectorText  anchorID="popup_menu_1" transform="translate(255px,126px)">Add Upper</SectorText>
+                <SectorText  anchorID="popup_menu_2" transform="translate(170px,106px)">Move Up</SectorText>
+                <SectorText  anchorID="popup_menu_3" transform="translate(95px,126px)">Add Sibling</SectorText>
+                <SectorText  anchorID="popup_menu_4" transform="translate(95px,226px)">Delete</SectorText>
+                <SectorText  anchorID="popup_menu_5" transform="translate(180px,257px)">Move Down</SectorText>
+                <SectorText  anchorID="popup_menu_6" transform="translate(250px,216px)">Add Lower</SectorText>
 
                 <svg style={{"position":"absolute","width":"250px","height":"250px","top":"75px","left":"75px"}}
                         viewBox="0 0 250 250"
@@ -145,7 +147,7 @@ export default class PopupMenu extends Component {
                 </svg>
                 <MainMenuContainer>
                     
-                    <InnerMenuContainer>
+                    <InnerMenuContainer id="popup_menu_0" onClick={this._editOnClick}>
 
                     </InnerMenuContainer>
                     
