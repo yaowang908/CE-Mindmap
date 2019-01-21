@@ -37,6 +37,7 @@ export default class PopupMenu extends Component {
         this.hide = this.hide.bind(this);
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
         this._editOnClick = this._editOnClick.bind(this);
+        this.setMenuContext = this.setMenuContext.bind(this);
         this.state= {
             containerWidth: 400, 
             radius: 125,
@@ -46,12 +47,17 @@ export default class PopupMenu extends Component {
             left: 0,
             top: 0,
             windowWidth: window.innerWidth,
-            windowHeight: window.innerHeight
+            windowHeight: window.innerHeight,
+            callerInfo:{},
+            context:{}
         }
     }
 
     hide(e) {
-        if (e.nativeEvent.target.localName === "svg" ) {//hide popup menu when click outside sector menus
+        // console.log(e.nativeEvent.target.localName);
+        if (e.nativeEvent.target.localName === "svg" || "div") {
+            //"svg":hide popup menu when click outside sector menus
+            //"div": hide menu when click on popupmenu container div
             this.setState({
                 display: "none"
             });
@@ -108,7 +114,46 @@ export default class PopupMenu extends Component {
         this.setState({
             display: nextProps.display ? nextProps.display : this.state.display,
             left: nextProps.left ? this.horizontalBorder(nextProps.left) : this.state.left,
-            top: nextProps.top ? this.verticalBorder(nextProps.top) : this.state.top
+            top: nextProps.top ? this.verticalBorder(nextProps.top) : this.state.top,
+            callerInfo: nextProps.callerInfo ? nextProps.callerInfo : this.state.callerInfo
+        });
+        // console.log(this.state.callerInfo);//TODO: pass in caller info
+        this.setMenuContext();
+    }
+
+    setMenuContext() {
+        let callerID = this.state.callerInfo.id;
+        let callerClass = this.state.callerInfo.classList[0];
+        let callerParent = this.state.callerInfo.parent;
+        let callerChildren = this.state.callerInfo.children;
+
+        console.log("ID: "+callerID);
+        console.log("Class: "+callerClass);
+        console.log("Parent: "+callerParent);
+        console.log("Children: "+callerChildren);
+
+        if(callerID = "node_1") {
+            //called by main node
+            console.log("set context");
+            this.setState({
+                context: {
+                    popup_menu_0: { disable: false,},//edit
+                    popup_menu_1: { disable: false,},//add upper
+                    popup_menu_2: { disable: false,},//move up
+                    popup_menu_3: { disable: false,},//add sibling
+                    popup_menu_4: { disable: true, },//delete
+                    popup_menu_5: { disable: false,},//move down
+                    popup_menu_6: { disable: false,}//add lower
+                }
+            });
+        }
+        
+    }
+
+    componentWillMount() {
+        //only run once when DOM init
+        this.setState({
+            callerInfo: this.props.callerInfo ? this.props.callerInfo : this.state.callerInfo
         });
     }
 
@@ -123,31 +168,31 @@ export default class PopupMenu extends Component {
                     }}
                 onClick={this.hide}
             > 
-                <SectorText  anchorID="popup_menu_0" transform="translate(185px,185px)" color="rgb(115, 161, 191)">
+                <SectorText anchorID="popup_menu_0" transform="translate(185px,185px)" color="rgb(115, 161, 191)">
                     Edit
                 </SectorText>
 
-                <SectorText  anchorID="popup_menu_1" transform="translate(255px,126px)">Add Upper</SectorText>
-                <SectorText  anchorID="popup_menu_2" transform="translate(170px,106px)">Move Up</SectorText>
-                <SectorText  anchorID="popup_menu_3" transform="translate(95px,126px)">Add Sibling</SectorText>
-                <SectorText  anchorID="popup_menu_4" transform="translate(95px,226px)">Delete</SectorText>
-                <SectorText  anchorID="popup_menu_5" transform="translate(180px,257px)">Move Down</SectorText>
-                <SectorText  anchorID="popup_menu_6" transform="translate(250px,216px)">Add Lower</SectorText>
+                <SectorText anchorID="popup_menu_1" transform="translate(255px,126px)" >Add Upper</SectorText>
+                <SectorText anchorID="popup_menu_2" transform="translate(170px,106px)" >Move Up</SectorText>
+                <SectorText anchorID="popup_menu_3" transform="translate(95px,126px)" >Add Sibling</SectorText>
+                <SectorText anchorID="popup_menu_4" transform="translate(95px,226px)" >Delete</SectorText>
+                <SectorText anchorID="popup_menu_5" transform="translate(180px,257px)" >Move Down</SectorText>
+                <SectorText anchorID="popup_menu_6" transform="translate(250px,216px)" >Add Lower</SectorText>
 
                 <svg style={{"position":"absolute","width":"250px","height":"250px","top":"75px","left":"75px"}}
                         viewBox="0 0 250 250"
                 >
-                    <Sectors id="popup_menu_1"></Sectors>
-                    <Sectors id="popup_menu_2" transform="rotate(-60,125,125)"></Sectors>
-                    <Sectors id="popup_menu_3" transform="rotate(-120,125,125)"></Sectors>
-                    <Sectors id="popup_menu_4" transform="rotate(-180,125,125)" fillColor="#f44b42" ></Sectors>
-                    <Sectors id="popup_menu_5" transform="rotate(120,125,125)" ></Sectors>
-                    <Sectors id="popup_menu_6" transform="rotate(60,125,125)" ></Sectors>
+                    <Sectors id="popup_menu_1" menuContext={this.state.context.popup_menu_1}></Sectors>
+                    <Sectors id="popup_menu_2" transform="rotate(-60,125,125)" menuContext={this.state.context.popup_menu_2}></Sectors>
+                    <Sectors id="popup_menu_3" transform="rotate(-120,125,125)" menuContext={this.state.context.popup_menu_3}></Sectors>
+                    <Sectors id="popup_menu_4" transform="rotate(-180,125,125)" fillColor="#f44b42" menuContext={this.state.context.popup_menu_4}></Sectors>
+                    <Sectors id="popup_menu_5" transform="rotate(120,125,125)" menuContext={this.state.context.popup_menu_5}></Sectors>
+                    <Sectors id="popup_menu_6" transform="rotate(60,125,125)" menuContext={this.state.context.popup_menu_6}></Sectors>
                     
                 </svg>
                 <MainMenuContainer>
                     
-                    <InnerMenuContainer id="popup_menu_0" onClick={this._editOnClick}>
+                    <InnerMenuContainer id="popup_menu_0" onClick={this._editOnClick} menuContext={this.state.context.popup_menu_0}>
 
                     </InnerMenuContainer>
                     

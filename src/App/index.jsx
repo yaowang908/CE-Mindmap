@@ -18,30 +18,48 @@ export default class App extends Component {
         this.state = {
             popupMenuDisplay: "none",
             popupMenuOffsetX: 0,
-            popupMenuOffsetY: 0
+            popupMenuOffsetY: 0,
+            popupMenuCallerInfo: {
+                                    id: "node_1",
+                                    classList: ['mainNode'],
+                                    parent: "none",
+                                    children: []                        
+                                    }
         }
     }
 
     _onClick(e) {
         let element = document.elementFromPoint(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+        // console.dir(element.parentElement);
         if(element.nodeName === "path") {//clicked on node
             this.setState({
                 popupMenuOffsetX: e.nativeEvent.offsetX,//clicked position abscissa
                 popupMenuOffsetY: e.nativeEvent.offsetY,//ordinate
-                popupMenuDisplay: this.state.popupMenuDisplay = "block"
+                popupMenuDisplay: this.state.popupMenuDisplay = "block",
+                popupMenuCallerInfo: {
+                                        id : element.parentElement.id,
+                                        classList : element.parentElement.classList,
+                                        parent: element.parentElement.dataset.parent,
+                                        children: element.parentElement.dataset.children    
+                                        }//clicked node id and class 
             });
         } else {//clicked on svg container
             if(this.state.popupMenuDisplay === "block") {//hide popup menu when click on empty space
                 this.setState({
-                    popupMenuDisplay: "none"
+                    popupMenuDisplay: "none",
+                    popupMenuCallerInfo: {
+                                            id: this.state.popupMenuCallerInfo.id,
+                                            classList: this.state.popupMenuCallerInfo.classList,
+                                            parent: this.state.popupMenuCallerInfo.parent,
+                                            children: this.state.popupMenuCallerInfo.children    
+                                        }//return to init state
                 });
             }
         }
-        console.dir(element.nodeName);
+        // console.dir(element);
     }
 
     componentWillMount() {
-
     }
 
     render() {
@@ -50,6 +68,7 @@ export default class App extends Component {
                 <PopupMenu display={this.state.popupMenuDisplay} 
                             left={this.state.popupMenuOffsetX}
                             top={this.state.popupMenuOffsetY}
+                            callerInfo={this.state.popupMenuCallerInfo}
                 ></PopupMenu>
                 <svg
                     id="mind_map"

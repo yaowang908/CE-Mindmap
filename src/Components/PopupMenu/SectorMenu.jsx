@@ -4,6 +4,7 @@ export default class Sectors extends Component {
     constructor(props) {
         super(props);
         this._onClickSector = this._onClickSector.bind(this);
+        this.ifMenuIsDisabled = this.ifMenuIsDisabled.bind(this);
         this.state = {
             id:"",
             containerWidth: 400,
@@ -11,7 +12,9 @@ export default class Sectors extends Component {
             fillColor: "rgb(115,161,191)",
             strokeColor: "rgb(57,80,96)",
             transform: "rotate(0,200,200)",
-            textTransform:""
+            textTransform:"",
+            disabledColor: "rgb(85,101,112)",
+            menuContext:{}
         }
     }
 
@@ -52,14 +55,29 @@ export default class Sectors extends Component {
             fillColor: this.props.fillColor ? this.props.fillColor : this.state.fillColor,
             strokeColor: this.props.strokeColor ? this.props.strokeColor : this.state.strokeColor,
             transform: this.props.transform ? this.props.transform : this.state.transform,
-            textTransform: this.props.textTransform ? this.props.textTransform : this.state.textTransform
+            textTransform: this.props.textTransform ? this.props.textTransform : this.state.textTransform,
+            menuContext: this.props.menuContext ? this.props.menuContext : this.state.menuContext
+        });
+    }
+
+    componentWillReceiveProps(nextProps) {
+        //update states when pass in new props
+        this.setState({
+            id: nextProps.id ? nextProps.id : this.state.id,
+            containerWidth: nextProps.containerWidth ? nextProps.containerWidth : this.state.containerWidth,
+            radius: nextProps.radius ? nextProps.radius : this.state.radius,
+            fillColor: nextProps.fillColor ? nextProps.fillColor : this.state.fillColor,
+            strokeColor: nextProps.strokeColor ? nextProps.strokeColor : this.state.strokeColor,
+            transform: nextProps.transform ? nextProps.transform : this.state.transform,
+            textTransform: nextProps.textTransform ? nextProps.textTransform : this.state.textTransform,
+            menuContext: nextProps.menuContext ? nextProps.menuContext : this.state.menuContext
         });
     }
 
     circleSectorMenuPath() {
+        //sector svg path
         let halfContainerWidth = this.state.containerWidth / 2;
         let radius = this.state.radius;
-
         return `
             M ${ radius + radius * Math.cos(60 * Math.PI / 180)},${radius - radius * Math.sin(60 * Math.PI / 180)}
             q ${ radius - radius * Math.cos(60 * Math.PI / 180)},${radius * Math.sin(60 * Math.PI / 180) - radius * Math.tan(30 * Math.PI / 180)}
@@ -67,6 +85,15 @@ export default class Sectors extends Component {
             h -${ radius}
             z 
         `;
+    }
+
+    ifMenuIsDisabled(color) {
+        //return disable color for disabled menu sector
+        if(this.state.menuContext.disable) {
+            return this.state.disabledColor;
+        } else {
+            return color;
+        }
     }
 
     render(){
@@ -78,7 +105,7 @@ export default class Sectors extends Component {
             >
                 <path
                     d={this.circleSectorMenuPath()}
-                    fill={this.state.fillColor}
+                    fill={this.ifMenuIsDisabled(this.state.fillColor)}
                     stroke={this.state.strokeColor}
                 />
                 <g transform={this.state.textTransform}>

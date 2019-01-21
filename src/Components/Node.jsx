@@ -17,12 +17,14 @@ export default class Node extends Component {
             startY: 100,
             fillColor: "rgb(115,161,191)",
             strokeColor: "rgb(57,80,96)",
-            transform:"",
-            text:"",
-            fontSize:"1em",
-            textColor:"#fff",
-            childID:"",
-            childClassName:""
+            transform: "",
+            text: "",
+            fontSize: "1em",
+            textColor: "#fff",
+            childID: "",
+            childClassName: "",
+            nodeParent: "",
+            nodeChildren: []
         }
     }
 
@@ -52,7 +54,9 @@ export default class Node extends Component {
             fontSize: this.props.fontSize ? this.props.fontSize : this.state.fontSize,
             textColor: this.props.textColor ? this.props.textColor : this.state.textColor,
             childID: this.props.childID ? this.props.childID : this.state.childID,
-            childClassName: this.props.childClassName ? this.props.childClassName : this.state.childClassName
+            childClassName: this.props.childClassName ? this.props.childClassName : this.state.childClassName,
+            nodeParent: this.props.nodeParent ? this.props.nodeParent : this.state.nodeParent,
+            nodeChildren: this.props.nodeChildren ? this.props.nodeChildren : this.state.nodeChildren
         });
     }
 
@@ -76,7 +80,12 @@ export default class Node extends Component {
     
     render() {
         return (
-            <g transform={this.state.transform} id={this.state.childID} className={this.state.childClassName}> 
+            <g transform={this.state.transform} 
+                id={this.state.childID} 
+                className={this.state.childClassName}
+                data-parent={this.state.nodeParent}
+                data-children={this.state.nodeChildren}    
+            > 
                 <path 
                     d={this.generatePath()}
                     fill={this.state.fillColor}
