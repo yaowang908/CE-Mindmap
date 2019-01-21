@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import Sectors from "./SectorMenu.jsx";
 import SectorText from "./SectorText.jsx";
+import MenuFunctionEdit from "./MenuFunctionEdit.jsx";
+
 
 const PopupMenuContainer = styled.div`
     width: 400px;
@@ -66,8 +68,12 @@ export default class PopupMenu extends Component {
 
     _editOnClick(e){
         let elementID = e.nativeEvent.target.id;
-        if (elementID = "popup_menu_0") {
+        if (elementID === "popup_menu_0") {
+            //when user clicked edit menu
             console.log("Edit");
+            let rect = e.nativeEvent.target.getBoundingClientRect();//get target element position
+            //TODO: put editor in right position
+            MenuFunctionEdit(rect);
         }
     }
 
@@ -117,7 +123,6 @@ export default class PopupMenu extends Component {
             top: nextProps.top ? this.verticalBorder(nextProps.top) : this.state.top,
             callerInfo: nextProps.callerInfo ? nextProps.callerInfo : this.state.callerInfo
         });
-        // console.log(this.state.callerInfo);//TODO: pass in caller info
         this.setMenuContext();
     }
 
@@ -134,15 +139,14 @@ export default class PopupMenu extends Component {
 
         if(callerID = "node_1") {
             //called by main node
-            console.log("set context");
             this.setState({
                 context: {
                     popup_menu_0: { disable: false,},//edit
-                    popup_menu_1: { disable: false,},//add upper
-                    popup_menu_2: { disable: false,},//move up
-                    popup_menu_3: { disable: false,},//add sibling
+                    popup_menu_1: { disable: true,},//add upper
+                    popup_menu_2: { disable: true,},//move up
+                    popup_menu_3: { disable: true,},//add sibling
                     popup_menu_4: { disable: true, },//delete
-                    popup_menu_5: { disable: false,},//move down
+                    popup_menu_5: { disable: true,},//move down
                     popup_menu_6: { disable: false,}//add lower
                 }
             });

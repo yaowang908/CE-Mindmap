@@ -24,6 +24,9 @@ export default class Sectors extends Component {
         if (element = "path") {
             //click on sector menu
             switch(elementID) {
+                // case 'popup_menu_0':
+                    //this case is not functioning, edit menu is different from other sector menu, its function is defined in PopupMenu.jsx
+                //     break;
                 case 'popup_menu_1':
                     console.log("Add upper");
                     break;

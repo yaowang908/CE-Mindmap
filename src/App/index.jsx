@@ -79,7 +79,8 @@ export default class App extends Component {
                     xmlnsXlink="http://www.w3.org/1999/xlink"
                 >
                     <MainNode>Here is main nodeHere is main nodeHere is main node</MainNode>
-                </svg> 
+                </svg>
+                <input id="node_text_editor" type="text" style={{"display":"none","position":"absolute","top":'0',"left":"0"}}/> 
             </MainContainer>       
         );
     }
