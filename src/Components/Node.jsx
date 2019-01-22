@@ -29,15 +29,15 @@ export default class Node extends Component {
     }
 
     generatePath() {
-        return `M ${this.state.startX}, ${this.state.startY}
+        return `M ${this.state.startX},${this.state.startY}
         h ${this.state.width}
-        q ${this.state.bezierRelative}, 0 ${this.state.bezierRelative}, ${this.state.bezierRelative}
+        q ${this.state.bezierRelative},0 ${this.state.bezierRelative},${this.state.bezierRelative}
         v ${this.state.height}
-        q 0, ${this.state.bezierRelative} -${this.state.bezierRelative}, ${this.state.bezierRelative}
+        q 0,${this.state.bezierRelative} -${this.state.bezierRelative},${this.state.bezierRelative}
         h -${this.state.width}
-        q -${this.state.bezierRelative}, 0 -${this.state.bezierRelative}, -${this.state.bezierRelative}
+        q -${this.state.bezierRelative},0 -${this.state.bezierRelative},-${this.state.bezierRelative}
         v -${this.state.height}
-        q0, -${this.state.bezierRelative} ${this.state.bezierRelative}, -${this.state.bezierRelative}`
+        q 0,-${this.state.bezierRelative} ${this.state.bezierRelative},-${this.state.bezierRelative}`
     }
 
     componentWillMount() {

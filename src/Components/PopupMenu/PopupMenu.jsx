@@ -72,8 +72,7 @@ export default class PopupMenu extends Component {
             //when user clicked edit menu
             console.log("Edit");
             let callerNode = document.getElementById(this.state.callerInfo.id);//get the actual node that user clicked on
-            let rect = callerNode.getBoundingClientRect();//get target element position
-            MenuFunctionEdit(rect);
+            MenuFunctionEdit(callerNode);
         }
     }
 
