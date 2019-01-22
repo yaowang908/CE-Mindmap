@@ -7,8 +7,9 @@ export default function MenuFunctionEdit(rect) {
     editor.setAttribute(
         "style",`
         left: ${rect.left}px;
-        top: ${rect.top}px;
+        top: ${rect.top+rect.height/2}px;
         width: ${rect.width}px;
+        height: ${rect.height/2}px;
         display: block;
         position: absolute;
         z-index: 1200;
@@ -27,5 +28,5 @@ export default function MenuFunctionEdit(rect) {
             `);
         }
     });
-    
+    //TODO: return user input value
 }
