@@ -17,23 +17,27 @@ export default class Node extends Component {
             startY: 100,
             fillColor: "rgb(115,161,191)",
             strokeColor: "rgb(57,80,96)",
-            transform:"",
-            text:"",
-            fontSize:"1em",
-            textColor:"#fff"
+            transform: "",
+            text: "",
+            fontSize: "1em",
+            textColor: "#fff",
+            childID: "",
+            childClassName: "",
+            nodeParent: "",
+            nodeChildren: []
         }
     }
 
     generatePath() {
-        return `M ${this.state.startX}, ${this.state.startY}
+        return `M ${this.state.startX},${this.state.startY}
         h ${this.state.width}
-        q ${this.state.bezierRelative}, 0 ${this.state.bezierRelative}, ${this.state.bezierRelative}
+        q ${this.state.bezierRelative},0 ${this.state.bezierRelative},${this.state.bezierRelative}
         v ${this.state.height}
-        q 0, ${this.state.bezierRelative} -${this.state.bezierRelative}, ${this.state.bezierRelative}
+        q 0,${this.state.bezierRelative} -${this.state.bezierRelative},${this.state.bezierRelative}
         h -${this.state.width}
-        q -${this.state.bezierRelative}, 0 -${this.state.bezierRelative}, -${this.state.bezierRelative}
+        q -${this.state.bezierRelative},0 -${this.state.bezierRelative},-${this.state.bezierRelative}
         v -${this.state.height}
-        q0, -${this.state.bezierRelative} ${this.state.bezierRelative}, -${this.state.bezierRelative}`
+        q 0,-${this.state.bezierRelative} ${this.state.bezierRelative},-${this.state.bezierRelative}`
     }
 
     componentWillMount() {
@@ -48,7 +52,11 @@ export default class Node extends Component {
             transform: this.props.transform ? this.props.transform : this.state.transform,
             text: this.props.text ? this.props.text : this.state.text,
             fontSize: this.props.fontSize ? this.props.fontSize : this.state.fontSize,
-            textColor: this.props.textColor ? this.props.textColor : this.state.textColor
+            textColor: this.props.textColor ? this.props.textColor : this.state.textColor,
+            childID: this.props.childID ? this.props.childID : this.state.childID,
+            childClassName: this.props.childClassName ? this.props.childClassName : this.state.childClassName,
+            nodeParent: this.props.nodeParent ? this.props.nodeParent : this.state.nodeParent,
+            nodeChildren: this.props.nodeChildren ? this.props.nodeChildren : this.state.nodeChildren
         });
     }
 
@@ -72,7 +80,12 @@ export default class Node extends Component {
     
     render() {
         return (
-            <g transform={this.state.transform}>
+            <g transform={this.state.transform} 
+                id={this.state.childID} 
+                className={this.state.childClassName}
+                data-parent={this.state.nodeParent}
+                data-children={this.state.nodeChildren}    
+            > 
                 <path 
                     d={this.generatePath()}
                     fill={this.state.fillColor}
@@ -82,7 +95,12 @@ export default class Node extends Component {
                 <g transform={`translate(${this.state.startX},${this.state.startY + this.state.height+ 10})`} 
                    fill={this.state.textColor} ref={this.textHolder}
                 >
-                    <text fontSize={this.state.fontSize} y={"-9"} ref={this.nodeText}>
+                    <text fontSize={this.state.fontSize} 
+                            y={"-9"} 
+                            ref={this.nodeText} 
+                            fontFamily={"'Open Sans', sans-serif"}
+                            style={{"pointerEvents":"none"}}
+                    >
                         {this.state.text}
                     </text> 
                 </g>
