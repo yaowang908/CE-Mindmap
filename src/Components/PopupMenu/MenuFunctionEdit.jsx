@@ -28,12 +28,30 @@ export default function MenuFunctionEdit(callerNode) {
         //hide editor when user hit enter
         if (!keydown_indicator && (e.code === 'Enter' || e.code ==="NumpadEnter") && editor === document.activeElement) { //editor !== document.activeElement ||
             
-            let last_state_domRect_width = callerNode.getBoundingClientRect().width;
-            let last_state_textNode_width = textHolder.getBoundingClientRect().width;
-            
             keydown_indicator = true;//prevent keydown fire mutiple times
-            editor.setAttribute(
-                "style", `
+            
+            updateTextContentOfCallerNode(callerNode, editor, newText, textHolder);
+            
+        }
+    },false);//end of event listener for keydown
+
+    let click_indicator = false; //prevent click fire mutiple times
+    document.getElementById("mind_map").addEventListener("click",function(e){
+    // add click listener to main svg
+        e.stopPropagation();
+        if(!click_indicator){
+            click_indicator = true;
+            updateTextContentOfCallerNode(callerNode, editor, newText, textHolder);
+        }
+
+    },false);
+    
+}
+
+function updateTextContentOfCallerNode(_callerNode,_editor,_newText,_textHolder) {
+    //hide input editor, and update node text
+    _editor.setAttribute(
+        "style", `
                 left: 0px;
                 top: 0px;
                 display: none;
@@ -41,35 +59,32 @@ export default function MenuFunctionEdit(callerNode) {
                 z-index: 1200;
             `);//hide editor
 
-            newText = editor.value;//user input
-            textHolder.textContent = newText;
+    _newText = _editor.value;//user input
+    _textHolder.textContent = _newText;
+    
 
-            //TODO: stretch width to fit content
-            let domRect = textHolder.getBoundingClientRect();
-            let nodePathHolder = callerNode.children[0];
-            let textNodeWidth_new = domRect.width+20;//make callerNode bigger than text holder FIXME:
-            let formerPathD = nodePathHolder.getAttribute("d").split('\n');
-            let newPathD = formerPathD.slice();
+    let last_state_domRect_width = _callerNode.getBoundingClientRect().width;
+    let last_state_textNode_width = _textHolder.getBoundingClientRect().width;
 
-            let start_point_x = newPathD[0].split(' ')[1].split(',')[0];//last state, path starting point-x
-            let start_point_y = newPathD[0].split(' ')[1].split(',')[1];//last state, path starting point-y
-            let new_start_point_x = Number(start_point_x) + Number((last_state_domRect_width - textNodeWidth_new)/2);//FIXME: wont stay together
-            newPathD[0] = "M " + new_start_point_x + ',' + start_point_y;
-            newPathD[1] = "h " + textNodeWidth_new;
-            newPathD[5] = "h -" + textNodeWidth_new;
-            
-            nodePathHolder.setAttribute('d', newPathD.join('\n'));
-            
-            //move text position
-            callerNode.children[1].children[0].setAttribute('dx', Number((last_state_textNode_width - textNodeWidth_new) / 2));
+    /** 
+     * Instead of re-centering mainNode by code, let user drag svg to center
+    */
+    let domRect = _textHolder.getBoundingClientRect();
+    let nodePathHolder = _callerNode.children[0];
+    let textNodeWidth_new = domRect.width + 5;//make callerNode bigger than text holder
+    let formerPathD = nodePathHolder.getAttribute("d").split('\n');
+    let newPathD = formerPathD.slice();
 
-            console.log(Number(last_state_domRect_width));
-            
-        }
-    },false);
+    let start_point_x = newPathD[0].split(' ')[1].split(',')[0];//last state, path starting point-x
+    let start_point_y = newPathD[0].split(' ')[1].split(',')[1];//last state, path starting point-y
+    // let new_start_point_x = Number(start_point_x) + Number((last_state_domRect_width - textNodeWidth_new)/2);
+    // re-assemble path d attribute
+    let new_start_point_x = start_point_x;
+    newPathD[0] = "M " + new_start_point_x + ',' + start_point_y;
+    newPathD[1] = "h " + textNodeWidth_new;
+    newPathD[5] = "h -" + textNodeWidth_new;
 
-    //TODO: do same thing when user click outside input editor
+    nodePathHolder.setAttribute('d', newPathD.join('\n'));
 
-
-
+    console.log(Number(last_state_domRect_width));
 }
