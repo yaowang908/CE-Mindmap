@@ -36,14 +36,14 @@ export default function MenuFunctionEdit(callerNode) {
     },false);//end of event listener for keydown
 
     let click_indicator = false; //prevent click fire mutiple times
-    document.getElementById("mind_map").addEventListener("click",function(e){
-    // add click listener to main svg
+    window.addEventListener("click",function(e){
+        // cannot add click listener to main svg, main svg already has click listener
+        let element = document.elementFromPoint(e.offsetX, e.offsetY);
         e.stopPropagation();
-        if(!click_indicator){
+        if(!click_indicator && element.id === "mind_map"){
             click_indicator = true;
             updateTextContentOfCallerNode(callerNode, editor, newText, textHolder);
         }
-
     },false);
     
 }
@@ -86,5 +86,5 @@ function updateTextContentOfCallerNode(_callerNode,_editor,_newText,_textHolder)
 
     nodePathHolder.setAttribute('d', newPathD.join('\n'));
 
-    console.log(Number(last_state_domRect_width));
+    // console.log(Number(last_state_domRect_width));
 }
