@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import MenuFunctionAddLower from "./MenuFunctionAddLower.jsx";
 
 export default class Sectors extends Component {
     constructor(props) {
@@ -14,14 +15,15 @@ export default class Sectors extends Component {
             transform: "rotate(0,200,200)",
             textTransform:"",
             disabledColor: "rgb(85,101,112)",
-            menuContext:{}
+            menuContext:{},
+            callerID:''
         }
     }
 
     _onClickSector(e) {
         let elementID = e.nativeEvent.target.parentElement.id;
         let element = e.nativeEvent.target.tagName;
-        if (element = "path") {
+        if (element === "path") {
             //click on sector menu
             switch(elementID) {
                 // case 'popup_menu_0':
@@ -45,6 +47,9 @@ export default class Sectors extends Component {
                     break;
                 case 'popup_menu_6':
                     console.log("Add Lower");
+                    // console.dir(e.nativeEvent.target);
+                    // console.log(this.state.callerID);
+                    MenuFunctionAddLower(this.state.callerID);
                     break;
             }
         }
@@ -59,7 +64,8 @@ export default class Sectors extends Component {
             strokeColor: this.props.strokeColor ? this.props.strokeColor : this.state.strokeColor,
             transform: this.props.transform ? this.props.transform : this.state.transform,
             textTransform: this.props.textTransform ? this.props.textTransform : this.state.textTransform,
-            menuContext: this.props.menuContext ? this.props.menuContext : this.state.menuContext
+            menuContext: this.props.menuContext ? this.props.menuContext : this.state.menuContext,
+            callerID: this.props.callerID ? this.props.callerID : this.state.callerID
         });
     }
 
@@ -73,7 +79,8 @@ export default class Sectors extends Component {
             strokeColor: nextProps.strokeColor ? nextProps.strokeColor : this.state.strokeColor,
             transform: nextProps.transform ? nextProps.transform : this.state.transform,
             textTransform: nextProps.textTransform ? nextProps.textTransform : this.state.textTransform,
-            menuContext: nextProps.menuContext ? nextProps.menuContext : this.state.menuContext
+            menuContext: nextProps.menuContext ? nextProps.menuContext : this.state.menuContext,
+            callerID: nextProps.callerID ? nextProps.callerID : this.state.callerID
         });
     }
 

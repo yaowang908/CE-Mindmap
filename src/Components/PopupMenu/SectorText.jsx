@@ -11,6 +11,7 @@ const TextContainer = styled.span`
     z-index: 300;
     cursor: pointer;
     user-select: none;
+    pointer-events: none;
 `;
 
 export default class SectorText extends Component{
@@ -36,8 +37,7 @@ export default class SectorText extends Component{
             <TextContainer id={this.state.anchorID + '_text'} 
                             style={{
                                     "transform":this.state.transform,
-                                    "color":this.state.color,
-                                    "pointer-events":"none"
+                                    "color":this.state.color
                                    }}
             >
                 {this.props.children}

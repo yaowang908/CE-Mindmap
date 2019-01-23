@@ -67,6 +67,7 @@ export default class PopupMenu extends Component {
     }
 
     _editOnClick(e){
+        //popup menu onclick function
         let elementID = e.nativeEvent.target.id;
         if (elementID === "popup_menu_0") {
             //when user clicked edit menu
@@ -126,17 +127,17 @@ export default class PopupMenu extends Component {
     }
 
     setMenuContext() {
-        let callerID = this.state.callerInfo.id;
-        let callerClass = this.state.callerInfo.classList[0];
-        let callerParent = this.state.callerInfo.parent;
-        let callerChildren = this.state.callerInfo.children;
+        let _callerID = this.state.callerInfo.id;
+        let _callerClass = this.state.callerInfo.classList[0];
+        let _callerParent = this.state.callerInfo.parent;
+        let _callerChildren = this.state.callerInfo.children;
 
-        console.log("ID: "+callerID);
-        console.log("Class: "+callerClass);
-        console.log("Parent: "+callerParent);
-        console.log("Children: "+callerChildren);
+        console.log("ID: "+_callerID);
+        console.log("Class: "+_callerClass);
+        console.log("Parent: "+_callerParent);
+        console.log("Children: "+_callerChildren);
 
-        if(callerID = "node_1") {
+        if(_callerID === "node_1") {
             //called by main node
             this.setState({
                 context: {
@@ -146,11 +147,11 @@ export default class PopupMenu extends Component {
                     popup_menu_3: { disable: true,},//add sibling
                     popup_menu_4: { disable: true, },//delete
                     popup_menu_5: { disable: true,},//move down
-                    popup_menu_6: { disable: false,}//add lower
+                    popup_menu_6: { disable: false,},//add lower
+                    callerID: _callerID
                 }
             });
         }
-        
     }
 
     componentWillMount() {
@@ -185,12 +186,30 @@ export default class PopupMenu extends Component {
                 <svg style={{"position":"absolute","width":"250px","height":"250px","top":"75px","left":"75px"}}
                         viewBox="0 0 250 250"
                 >
-                    <Sectors id="popup_menu_1" menuContext={this.state.context.popup_menu_1}></Sectors>
-                    <Sectors id="popup_menu_2" transform="rotate(-60,125,125)" menuContext={this.state.context.popup_menu_2}></Sectors>
-                    <Sectors id="popup_menu_3" transform="rotate(-120,125,125)" menuContext={this.state.context.popup_menu_3}></Sectors>
-                    <Sectors id="popup_menu_4" transform="rotate(-180,125,125)" fillColor="#f44b42" menuContext={this.state.context.popup_menu_4}></Sectors>
-                    <Sectors id="popup_menu_5" transform="rotate(120,125,125)" menuContext={this.state.context.popup_menu_5}></Sectors>
-                    <Sectors id="popup_menu_6" transform="rotate(60,125,125)" menuContext={this.state.context.popup_menu_6}></Sectors>
+                    <Sectors id="popup_menu_1" /* Add Upper */
+                        callerID={this.state.context.callerID} 
+                        menuContext={this.state.context.popup_menu_1}></Sectors>
+                    <Sectors id="popup_menu_2" /* Move Up */
+                        transform="rotate(-60,125,125)" 
+                        callerID={this.state.context.callerID} 
+                        menuContext={this.state.context.popup_menu_2}></Sectors>
+                    <Sectors id="popup_menu_3" /* Add sibling */
+                        transform="rotate(-120,125,125)" 
+                        callerID={this.state.context.callerID} 
+                        menuContext={this.state.context.popup_menu_3}></Sectors>
+                    <Sectors id="popup_menu_4" /* DELETE */
+                        transform="rotate(-180,125,125)" 
+                        fillColor="#f44b42" 
+                        callerID={this.state.context.callerID} 
+                        menuContext={this.state.context.popup_menu_4}></Sectors>
+                    <Sectors id="popup_menu_5" /* Move Down */
+                        transform="rotate(120,125,125)" 
+                        callerID={this.state.context.callerID} 
+                        menuContext={this.state.context.popup_menu_5}></Sectors>
+                    <Sectors id="popup_menu_6" /* Add Lower */
+                        transform="rotate(60,125,125)" 
+                        callerID={this.state.context.callerID} 
+                        menuContext={this.state.context.popup_menu_6}></Sectors>
                     
                 </svg>
                 <MainMenuContainer>
