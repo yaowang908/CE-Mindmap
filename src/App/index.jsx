@@ -4,6 +4,8 @@ import Node from "../Components/Node";
 import styled from "styled-components";
 import PopupMenu from "../Components/PopupMenu/PopupMenu.jsx";
 
+import "../Components/Functions/ZoomFunction.jsx";
+
 const MainContainer =styled.div`
     width: 100%;
     height: 100%;
@@ -73,8 +75,6 @@ export default class App extends Component {
                 <svg
                     id="mind_map"
                     onClick={this._onClick}
-                    width="100%"
-                    height="100%" 
                     xmlns="http://www.w3.org/2000/svg" 
                     xmlnsXlink="http://www.w3.org/1999/xlink"
                 >
