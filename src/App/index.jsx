@@ -78,7 +78,9 @@ export default class App extends Component {
                     xmlns="http://www.w3.org/2000/svg" 
                     xmlnsXlink="http://www.w3.org/1999/xlink"
                 >
-                    <MainNode>Here is main nodeHere is main nodeHere is main node</MainNode>
+                    <g id="mind_map_node_container" width="100%" height="100%">
+                        <MainNode>Here is main nodeHere is main nodeHere is main node</MainNode>
+                    </g>
                 </svg>
                 <input id="node_text_editor" type="text" style={{"display":"none","position":"absolute","top":'0',"left":"0"}}/> 
             </MainContainer>       
