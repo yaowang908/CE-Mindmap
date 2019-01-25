@@ -40,6 +40,7 @@ export default class PopupMenu extends Component {
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
         this._editOnClick = this._editOnClick.bind(this);
         this.setMenuContext = this.setMenuContext.bind(this);
+        this.addLowerMenuClicked = this.addLowerMenuClicked.bind(this);
         this.state= {
             containerWidth: 400, 
             radius: 125,
@@ -51,7 +52,7 @@ export default class PopupMenu extends Component {
             windowWidth: window.innerWidth,
             windowHeight: window.innerHeight,
             callerInfo:{},
-            context:{}
+            context:{},
         }
     }
 
@@ -157,8 +158,12 @@ export default class PopupMenu extends Component {
     componentWillMount() {
         //only run once when DOM init
         this.setState({
-            callerInfo: this.props.callerInfo ? this.props.callerInfo : this.state.callerInfo
+            callerInfo: this.props.callerInfo ? this.props.callerInfo : this.state.callerInfo,
         });
+    }
+
+    addLowerMenuClicked(yesOrNo) {//get value from child node, and pass to parent node
+        this.props.clickToAdd(yesOrNo);
     }
 
     render() {
@@ -209,7 +214,9 @@ export default class PopupMenu extends Component {
                     <Sectors id="popup_menu_6" /* Add Lower */
                         transform="rotate(60,125,125)" 
                         callerID={this.state.context.callerID} 
-                        menuContext={this.state.context.popup_menu_6}></Sectors>
+                        menuContext={this.state.context.popup_menu_6}
+                        clickedOrNot={this.addLowerMenuClicked}
+                        ></Sectors>
                     
                 </svg>
                 <MainMenuContainer>

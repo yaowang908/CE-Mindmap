@@ -64,6 +64,8 @@ export default class Node extends Component {
 
         if(this.nodeText.current) {
             //adjust path width to text width
+            console.log("nodetext:");
+            console.dir(this.nodeText.current);
             let bbox = this.nodeText.current.getBBox();
             let textWidth = bbox.width;
             let textHeight = bbox.height;

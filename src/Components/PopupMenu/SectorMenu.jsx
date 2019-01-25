@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import MenuFunctionAddLower from "./MenuFunctionAddLower.jsx";
 
 export default class Sectors extends Component {
     constructor(props) {
@@ -49,7 +48,7 @@ export default class Sectors extends Component {
                     console.log("Add Lower");
                     // console.dir(e.nativeEvent.target);
                     // console.log(this.state.callerID);
-                    MenuFunctionAddLower(this.state.callerID);
+                    this.props.clickedOrNot(true);
                     break;
             }
         }

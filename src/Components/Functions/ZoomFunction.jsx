@@ -1,10 +1,5 @@
 import $ from "jquery";
 
-/**TODO:
- * 1. 
- * 2. instead of making svg super big, we can make it scaling! This is SVG's advantage, after all
- */
-
 function ZoomFunction(zoomLevel, offSetIndex) {
     return function(e){
         let deltaY = e.originalEvent.deltaY; 

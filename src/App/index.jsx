@@ -3,6 +3,7 @@ import MainNode from "../Components/MainNode.jsx";
 import Node from "../Components/Node";
 import styled from "styled-components";
 import PopupMenu from "../Components/PopupMenu/PopupMenu.jsx";
+import MenuFunctionAddLower from "../Components/PopupMenu/MenuFunctionAddLower.jsx";
 
 import "../Components/Functions/ZoomFunction.jsx";
 
@@ -17,6 +18,7 @@ export default class App extends Component {
     constructor(props) {
         super(props);
         this._onClick = this._onClick.bind(this);
+        this._addChildren = this._addChildren.bind(this);
         this.state = {
             popupMenuDisplay: "none",
             popupMenuOffsetX: 0,
@@ -26,7 +28,8 @@ export default class App extends Component {
                                     classList: ['mainNode'],
                                     parent: "none",
                                     children: []                        
-                                    }
+                                    },
+            SVGChildren: 0
         }
     }
 
@@ -61,16 +64,29 @@ export default class App extends Component {
         // console.dir(element);
     }
 
+    _addChildren(value){//TODO:
+        if(value) {
+            console.log("Add Child now!!")//clicked popupmenu add lower
+            this.setState({
+                SVGChildren: this.state.SVGChildren + 1
+            })
+        }
+    }
+
+
     componentWillMount() {
     }
 
     render() {
+        const nodes = MenuFunctionAddLower(this.state.SVGChildren);//click to add
+
         return (
             <MainContainer>
                 <PopupMenu display={this.state.popupMenuDisplay} 
                             left={this.state.popupMenuOffsetX}
                             top={this.state.popupMenuOffsetY}
                             callerInfo={this.state.popupMenuCallerInfo}
+                            clickToAdd={this._addChildren}
                 ></PopupMenu>
                 <svg
                     id="mind_map"
@@ -80,6 +96,7 @@ export default class App extends Component {
                 >
                     <g id="mind_map_node_container" width="100%" height="100%">
                         <MainNode>Here is main nodeHere is main nodeHere is main node</MainNode>
+                        {nodes}
                     </g>
                 </svg>
                 <input id="node_text_editor" type="text" style={{"display":"none","position":"absolute","top":'0',"left":"0"}}/> 
