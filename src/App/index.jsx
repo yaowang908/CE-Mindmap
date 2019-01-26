@@ -29,18 +29,21 @@ export default class App extends Component {
                                     parent: "none",
                                     children: []                        
                                     },
-            SVGChildren: 0
+            SVGChildren: [],
+            SVGChildrenNum: 1
         }
     }
 
     _onClick(e) {
         let element = document.elementFromPoint(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-        // console.dir(element.parentElement);
+        // console.dir(element);
         if(element.nodeName === "path") {//clicked on node
+            // console.log("Clicked coordinates are: " + e.nativeEvent.offsetX+', '+e.nativeEvent.offsetY);
+            // console.log("Clicked ele ID is: "+element.parentElement.id);
             this.setState({
                 popupMenuOffsetX: e.nativeEvent.offsetX,//clicked position abscissa
                 popupMenuOffsetY: e.nativeEvent.offsetY,//ordinate
-                popupMenuDisplay: this.state.popupMenuDisplay = "block",
+                popupMenuDisplay: "block",
                 popupMenuCallerInfo: {
                                         id : element.parentElement.id,
                                         classList : element.parentElement.classList,
@@ -52,23 +55,69 @@ export default class App extends Component {
             if(this.state.popupMenuDisplay === "block") {//hide popup menu when click on empty space
                 this.setState({
                     popupMenuDisplay: "none",
-                    popupMenuCallerInfo: {
-                                            id: this.state.popupMenuCallerInfo.id,
-                                            classList: this.state.popupMenuCallerInfo.classList,
-                                            parent: this.state.popupMenuCallerInfo.parent,
-                                            children: this.state.popupMenuCallerInfo.children    
-                                        }//return to init state
+                    // popupMenuCallerInfo: {
+                    //                         id: this.state.popupMenuCallerInfo.id,
+                    //                         classList: this.state.popupMenuCallerInfo.classList,
+                    //                         parent: this.state.popupMenuCallerInfo.parent,
+                    //                         children: this.state.popupMenuCallerInfo.children    
+                    //                     }//return to init state
                 });
             }
         }
         // console.dir(element);
     }
 
-    _addChildren(value){//TODO:
-        if(value) {
+    _addChildren(menuContext){
+        if (menuContext) {
             console.log("Add Child now!!")//clicked popupmenu add lower
+            console.log("menucontext: ");
+            console.dir(menuContext);
+            /**
+             * 1. store all nodes in SVGChildren, mainNode doesn't belong to here.
+             * 2. update this.state.SVGChildren when new node added.
+             * 3. each node should have id and class, to identify itself in which level.
+             * 4. nodes are rendered in render() by MenuFunctionAddLower().
+             * 5. refer to all nodes by ID
+             *  */
+            /**
+             * menuContext = {
+             *  callerChildren:
+             *  callerClass:
+             *  callerID:
+             *  callerParent: 
+             * }
+             */
+            let _thisID = "node_" + (Number(this.state.SVGChildrenNum)+1);//new node ID
+            let _thisCallerChildren = (menuContext.callerChildren+'').split(',').slice();//copy array, to avoid edit origin
+            _thisCallerChildren.push(_thisID);//add this new node to callerChildren
+            let _thisClass = menuContext.callerClass === "mainNode" ? 
+                                "level_1" :
+                                "level_" + (Number(menuContext.callerClass.split("_")[1])+1);
+            let _thisParent = menuContext.callerID;
+            let _thisChildren = [];
+
+            let new_SVGChildren = this.state.SVGChildren.slice();//copy origin to avoid edit
+            if(new_SVGChildren.filter(node=>node.id === _thisParent)){
+                //if _thisParent is an existing node in this list
+                new_SVGChildren = new_SVGChildren.map((node)=>{
+                    if(node.id===_thisParent) {
+                        node.children.push(_thisID);
+                    }
+                    return node;
+                });
+            }
+
+            new_SVGChildren.push({
+                id: _thisID,
+                siblings: _thisCallerChildren,
+                class: _thisClass,
+                parent: _thisParent,
+                children: []
+            });
+
             this.setState({
-                SVGChildren: this.state.SVGChildren + 1
+                SVGChildren: new_SVGChildren,
+                SVGChildrenNum: this.state.SVGChildrenNum + 1
             })
         }
     }

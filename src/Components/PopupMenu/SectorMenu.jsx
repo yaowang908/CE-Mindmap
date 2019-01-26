@@ -5,6 +5,7 @@ export default class Sectors extends Component {
         super(props);
         this._onClickSector = this._onClickSector.bind(this);
         this.ifMenuIsDisabled = this.ifMenuIsDisabled.bind(this);
+        this.hidePopupMenu = this.hidePopupMenu.bind(this);
         this.state = {
             id:"",
             containerWidth: 400,
@@ -48,10 +49,15 @@ export default class Sectors extends Component {
                     console.log("Add Lower");
                     // console.dir(e.nativeEvent.target);
                     // console.log(this.state.callerID);
-                    this.props.clickedOrNot(true);
+                    this.props.clickedOrNot(this.state.menuContext);
+                    // this.hidePopupMenu();
                     break;
             }
         }
+    }
+
+    hidePopupMenu() {
+        document.getElementById("popup_menu").setAttribute("style","display: none");
     }
 
     componentWillMount() {

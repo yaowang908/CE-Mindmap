@@ -64,8 +64,8 @@ export default class Node extends Component {
 
         if(this.nodeText.current) {
             //adjust path width to text width
-            console.log("nodetext:");
-            console.dir(this.nodeText.current);
+            // console.log("nodetext:");
+            // console.dir(this.nodeText.current);
             let bbox = this.nodeText.current.getBBox();
             let textWidth = bbox.width;
             let textHeight = bbox.height;
@@ -86,7 +86,7 @@ export default class Node extends Component {
                 id={this.state.childID} 
                 className={this.state.childClassName}
                 data-parent={this.state.nodeParent}
-                data-children={this.state.nodeChildren}    
+                data-children={this.state.nodeChildren.join(',')}    
             > 
                 <path 
                     d={this.generatePath()}

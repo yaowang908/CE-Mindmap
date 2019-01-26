@@ -2,8 +2,13 @@ import React, { Component } from "react";
 import Node from "../Node.jsx";
 
 export default function MenuFunctionAddLower(children) {
+    /**
+     * children contains all nodes,except mainNode
+     * each node have {id,siblings,class,parent}
+     */
    
-    console.log("Add Lower Node function got called!");
+    // console.log("Add Lower Node function got called!");
+    // console.dir(children);
 
     let _nodes=[];
     /**TODO: 
@@ -12,18 +17,18 @@ export default function MenuFunctionAddLower(children) {
      * 3. make a curve line connect parent node and child node
      *  
      * */
-    let random = Math.random()*100+100;
+    let random = Math.random()*200+100;
 
-    for (var i = 0; i < children; i += 1) {
-        _nodes.push(<Node childClassName={"node"}
-                            childID={"node_2"}
-                            startX={window.innerWidth / 2 + random}
-                            startY={window.innerHeight / 2 + random}
-                            width={"100"}
-                            height={"50"}
+    for (var i = 0; i < children.length; i += 1) {
+        _nodes.push(<Node childClassName={children[i].class}
+                            childID={children[i].id}
+                            startX={window.innerWidth / 2 + random}//TODO:
+                            startY={window.innerHeight / 2 + random}//TODO:
+                            width={"100"}//original width
+                            height={"50"}//original height
                             transform={""}
                             text={"New Node"}
-                            nodeParent={"node_1"}
+                            nodeParent={children[i].parent}
                             nodeChildren={[]}
                         />);
     };

@@ -20,7 +20,7 @@ function ZoomFunction(zoomLevel, offSetIndex) {
 
 $(document).ready(function(){
     //DOM ready here
-    console.log("this is external JS snip, for Zoom function!");
+    // console.log("this is external JS snip, for Zoom function!");
 
     let zoomLevel = 1;//svg zoom level
     let offSetIndex = 0;

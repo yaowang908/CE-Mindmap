@@ -2,6 +2,7 @@
 
 export default function MenuFunctionEdit(callerNode) {
     console.log("Now in edit function");
+    console.dir(callerNode);
     let editor = document.getElementById("node_text_editor");
     let rect = callerNode.getBoundingClientRect();//get target element position
     // console.dir(rect);
@@ -22,33 +23,53 @@ export default function MenuFunctionEdit(callerNode) {
     `);
     editor.focus();//set focus to input editor
     
-    let keydown_indicator = false; //prevent keydown fire mutiple times
-    window.addEventListener("keydown", function (e) {
-        e.stopPropagation();
-        //hide editor when user hit enter
-        if (!keydown_indicator && (e.code === 'Enter' || e.code ==="NumpadEnter") && editor === document.activeElement) { //editor !== document.activeElement ||
-            
-            keydown_indicator = true;//prevent keydown fire mutiple times
-            
-            updateTextContentOfCallerNode(callerNode, editor, newText, textHolder);
-            
-        }
-    },false);//end of event listener for keydown
+    window.addEventListener("keydown", handler("keydown",callerNode, editor, newText, textHolder) ,false);//end of event listener for keydown
 
-    let click_indicator = false; //prevent click fire mutiple times
-    window.addEventListener("click",function(e){
-        // cannot add click listener to main svg, main svg already has click listener
-        let element = document.elementFromPoint(e.offsetX, e.offsetY);
-        e.stopPropagation();
-        if(!click_indicator && element.id === "mind_map"){
-            click_indicator = true;
-            updateTextContentOfCallerNode(callerNode, editor, newText, textHolder);
-        }
-    },false);
-    
+    window.addEventListener("click", handler("click", callerNode, editor, newText, textHolder), false);
+
 }
 
+function handler(eventType,callerNode, editor, newText, textHolder) {
+    function handlerReference(e) {
+        e.stopPropagation();
+        //hide editor when user hit enter
+        let _handlerReference = handlerReference;
+        if (eventType=== 'keydown'&& (e.code === 'Enter' || e.code === "NumpadEnter") && editor === document.activeElement) { //editor !== document.activeElement ||
+            // console.log("keydownhandler fired!");
+            document.activeElement.blur();
+
+            updateTextContentOfCallerNode(callerNode, editor, newText, textHolder);
+            this.removeEventListener("keydown", _handlerReference, false);            
+            //actual event handler is the returned function
+        } else if (eventType === 'click' && document.elementFromPoint(e.offsetX, e.offsetY).id === "mind_map") {
+            // console.log("clickHandler fired!");
+            document.activeElement.blur();
+
+            updateTextContentOfCallerNode(callerNode, editor, newText, textHolder);
+            this.removeEventListener("click", _handlerReference, false);
+        }
+        // console.dir(document.activeElement);
+        if (editor !== document.activeElement) {
+            this.removeEventListener("click", _handlerReference, false);//not working
+            this.removeEventListener("keydown", _handlerReference, false);
+        }
+    }
+    return handlerReference;
+}
+
+
 function updateTextContentOfCallerNode(_callerNode,_editor,_newText,_textHolder) {
+    console.log("==================");
+    console.log("update nodes here: ");
+    console.log("callernode: ");
+    console.dir(_callerNode);
+    console.log("_editor: ");
+    console.dir(_editor);
+    console.log("_newText: ");
+    console.dir(_newText);
+    console.log("_textHolder: ");
+    console.dir(_textHolder);
+    console.log("================");
     //hide input editor, and update node text
     _editor.setAttribute(
         "style", `
@@ -66,7 +87,7 @@ function updateTextContentOfCallerNode(_callerNode,_editor,_newText,_textHolder)
     let last_state_domRect_width = _callerNode.getBoundingClientRect().width;
     let last_state_textNode_width = _textHolder.getBoundingClientRect().width;
 
-    /** 
+    /** TODO:
      * Instead of re-centering mainNode by code, let user drag svg to center
     */
     let domRect = _textHolder.getBoundingClientRect();

@@ -133,23 +133,57 @@ export default class PopupMenu extends Component {
         let _callerParent = this.state.callerInfo.parent;
         let _callerChildren = this.state.callerInfo.children;
 
-        console.log("ID: "+_callerID);
-        console.log("Class: "+_callerClass);
-        console.log("Parent: "+_callerParent);
-        console.log("Children: "+_callerChildren);
+        // console.log("ID: "+_callerID);
+        // console.log("Class: "+_callerClass);
+        // console.log("Parent: "+_callerParent);
+        // console.log("Children: "+_callerChildren);
 
         if(_callerID === "node_1") {
             //called by main node
             this.setState({
                 context: {
-                    popup_menu_0: { disable: false,},//edit
-                    popup_menu_1: { disable: true,},//add upper
-                    popup_menu_2: { disable: true,},//move up
-                    popup_menu_3: { disable: true,},//add sibling
-                    popup_menu_4: { disable: true, },//delete
-                    popup_menu_5: { disable: true,},//move down
-                    popup_menu_6: { disable: false,},//add lower
-                    callerID: _callerID
+                    popup_menu_0: { //edit
+                        disable: false,
+                        callerID: _callerID,
+                        callerClass: _callerClass,
+                        callerParent: _callerParent,
+                        callerChildren: _callerChildren},
+                    popup_menu_1: {//add upper
+                        disable: true, 
+                        callerID: _callerID,
+                        callerClass: _callerClass,
+                        callerParent: _callerParent,
+                        callerChildren: _callerChildren},
+                    popup_menu_2: { //move up
+                        disable: true,
+                        callerID: _callerID,
+                        callerClass: _callerClass,
+                        callerParent: _callerParent,
+                        callerChildren: _callerChildren},
+                    popup_menu_3: { //add sibling
+                        disable: true, 
+                        callerID: _callerID,
+                        callerClass: _callerClass,
+                        callerParent: _callerParent,
+                        callerChildren: _callerChildren},
+                    popup_menu_4: {//delete
+                        disable: true,
+                        callerID: _callerID,
+                        callerClass: _callerClass,
+                        callerParent: _callerParent,
+                        callerChildren: _callerChildren},
+                    popup_menu_5: {//move down
+                        disable: true, 
+                        callerID: _callerID,
+                        callerClass: _callerClass,
+                        callerParent: _callerParent,
+                        callerChildren: _callerChildren},
+                    popup_menu_6: {//add lower
+                        disable: false, 
+                        callerID: _callerID,
+                        callerClass: _callerClass,
+                        callerParent: _callerParent,
+                        callerChildren: _callerChildren}
                 }
             });
         }
@@ -162,8 +196,8 @@ export default class PopupMenu extends Component {
         });
     }
 
-    addLowerMenuClicked(yesOrNo) {//get value from child node, and pass to parent node
-        this.props.clickToAdd(yesOrNo);
+    addLowerMenuClicked(menuContext) {//get value from child node, and pass to parent node
+        this.props.clickToAdd(menuContext);
     }
 
     render() {
@@ -176,6 +210,7 @@ export default class PopupMenu extends Component {
                         "z-index":"1000"
                     }}
                 onClick={this.hide}
+                id={'popup_menu'}
             > 
                 <SectorText anchorID="popup_menu_0" transform="translate(185px,185px)" color="rgb(115, 161, 191)">
                     Edit
