@@ -69,9 +69,9 @@ export default class App extends Component {
 
     _addChildren(menuContext){
         if (menuContext) {
-            console.log("Add Child now!!")//clicked popupmenu add lower
-            console.log("menucontext: ");
-            console.dir(menuContext);
+            // console.log("Add Child now!!")//clicked popupmenu add lower
+            // console.log("menucontext: ");
+            // console.dir(menuContext);
             /**
              * 1. store all nodes in SVGChildren, mainNode doesn't belong to here.
              * 2. update this.state.SVGChildren when new node added.

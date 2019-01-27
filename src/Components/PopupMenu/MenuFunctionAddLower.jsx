@@ -7,10 +7,21 @@ export default function MenuFunctionAddLower(children) {
      * each node have {id,siblings,class,parent}
      */
    
-    // console.log("Add Lower Node function got called!");
-    // console.dir(children);
+    console.log("Add Lower Node function got called!");
+    console.dir(children);
 
     let _nodes=[];
+
+//level_1 nodes
+    let _nodes_level_1 = children.filter(child=>child.class === "level_1");
+    console.dir(_nodes_level_1);
+
+    /**TODO: 
+     * 1. level_1 nodes surround mainNode
+     * 2. even or not, less than 2, or more than 3
+     * 3. lower level nodes all go one direction
+    */
+
     /**TODO: 
      * 1. add child node
      * 2. move to right position
