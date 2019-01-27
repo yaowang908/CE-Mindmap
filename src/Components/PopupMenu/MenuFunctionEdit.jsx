@@ -59,17 +59,18 @@ function handler(eventType,callerNode, editor, newText, textHolder) {
 
 
 function updateTextContentOfCallerNode(_callerNode,_editor,_newText,_textHolder) {
-    console.log("==================");
-    console.log("update nodes here: ");
-    console.log("callernode: ");
-    console.dir(_callerNode);
-    console.log("_editor: ");
-    console.dir(_editor);
-    console.log("_newText: ");
-    console.dir(_newText);
-    console.log("_textHolder: ");
-    console.dir(_textHolder);
-    console.log("================");
+    // console.log("==================");
+    // console.log("update nodes here: ");
+    // console.log("callernode: ");
+    // console.dir(_callerNode);
+    // console.log("_editor: ");
+    // console.dir(_editor);
+    // console.log("_newText: ");
+    // console.dir(_newText);
+    // console.log("_textHolder: ");
+    // console.dir(_textHolder);
+    // console.log("================");
+    
     //hide input editor, and update node text
     _editor.setAttribute(
         "style", `

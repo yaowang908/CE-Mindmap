@@ -118,73 +118,61 @@ export default class PopupMenu extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            display: nextProps.display ? nextProps.display : this.state.display,
-            left: nextProps.left ? this.horizontalBorder(nextProps.left) : this.state.left,
-            top: nextProps.top ? this.verticalBorder(nextProps.top) : this.state.top,
-            callerInfo: nextProps.callerInfo ? nextProps.callerInfo : this.state.callerInfo
-        });
-        this.setMenuContext();
+        this.setMenuContext(nextProps);
     }
 
-    setMenuContext() {
-        let _callerID = this.state.callerInfo.id;
-        let _callerClass = this.state.callerInfo.classList[0];
-        let _callerParent = this.state.callerInfo.parent;
-        let _callerChildren = this.state.callerInfo.children;
+    setMenuContext(nextProps) {
+        let _thisCallerInfo = nextProps.callerInfo ? nextProps.callerInfo : this.state.callerInfo;
+        let _callerID = _thisCallerInfo.id;
+        let _callerClass = _thisCallerInfo.classList[0];
+        let _callerParent = _thisCallerInfo.parent;
+        let _callerChildren = _thisCallerInfo.children;
 
         // console.log("ID: "+_callerID);
         // console.log("Class: "+_callerClass);
         // console.log("Parent: "+_callerParent);
         // console.log("Children: "+_callerChildren);
 
+        let index = ['popup_menu_0', 'popup_menu_1', 'popup_menu_2', 'popup_menu_3', 'popup_menu_4', 'popup_menu_5', 'popup_menu_6'];
+        
+        function creatContextOBJ(menuStatusArray) {
+            //generate menucontext object
+            let tmp = {};
+            // let disabledOrNot = [false, true, true, true, true, true, false];
+            let disabledOrNot = menuStatusArray;
+            //edit,add_upper,move_up,add_sibling,delete,move_down,add_lower
+            index.map((elt, index) => {
+                tmp[elt] = {
+                    disable: disabledOrNot[index],
+                    callerID: _callerID,
+                    callerClass: _callerClass,
+                    callerParent: _callerParent,
+                    callerChildren: _callerChildren
+                }
+            });
+            return tmp;
+        }
+        
         if(_callerID === "node_1") {
             //called by main node
+            let _context = creatContextOBJ([false, true, true, true, true, true, false]);
+                                        //edit,add_upper,move_up,add_sibling,delete,move_down,add_lower
+                                        //if true then disabled
             this.setState({
-                context: {
-                    popup_menu_0: { //edit
-                        disable: false,
-                        callerID: _callerID,
-                        callerClass: _callerClass,
-                        callerParent: _callerParent,
-                        callerChildren: _callerChildren},
-                    popup_menu_1: {//add upper
-                        disable: true, 
-                        callerID: _callerID,
-                        callerClass: _callerClass,
-                        callerParent: _callerParent,
-                        callerChildren: _callerChildren},
-                    popup_menu_2: { //move up
-                        disable: true,
-                        callerID: _callerID,
-                        callerClass: _callerClass,
-                        callerParent: _callerParent,
-                        callerChildren: _callerChildren},
-                    popup_menu_3: { //add sibling
-                        disable: true, 
-                        callerID: _callerID,
-                        callerClass: _callerClass,
-                        callerParent: _callerParent,
-                        callerChildren: _callerChildren},
-                    popup_menu_4: {//delete
-                        disable: true,
-                        callerID: _callerID,
-                        callerClass: _callerClass,
-                        callerParent: _callerParent,
-                        callerChildren: _callerChildren},
-                    popup_menu_5: {//move down
-                        disable: true, 
-                        callerID: _callerID,
-                        callerClass: _callerClass,
-                        callerParent: _callerParent,
-                        callerChildren: _callerChildren},
-                    popup_menu_6: {//add lower
-                        disable: false, 
-                        callerID: _callerID,
-                        callerClass: _callerClass,
-                        callerParent: _callerParent,
-                        callerChildren: _callerChildren}
-                }
+                display: nextProps.display ? nextProps.display : this.state.display,
+                left: nextProps.left ? this.horizontalBorder(nextProps.left) : this.state.left,
+                top: nextProps.top ? this.verticalBorder(nextProps.top) : this.state.top,
+                callerInfo: nextProps.callerInfo ? nextProps.callerInfo : this.state.callerInfo,
+                context: _context
+            });
+        } else {
+            let _context = creatContextOBJ([false, true, true, false, false, false, false]);
+            this.setState({
+                display: nextProps.display ? nextProps.display : this.state.display,
+                left: nextProps.left ? this.horizontalBorder(nextProps.left) : this.state.left,
+                top: nextProps.top ? this.verticalBorder(nextProps.top) : this.state.top,
+                callerInfo: nextProps.callerInfo ? nextProps.callerInfo : this.state.callerInfo,
+                context: _context
             });
         }
     }
