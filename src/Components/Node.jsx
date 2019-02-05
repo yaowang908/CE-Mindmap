@@ -18,13 +18,8 @@ export default class Node extends Component {
             fillColor: "rgb(115,161,191)",
             strokeColor: "rgb(57,80,96)",
             transform: "",
-            text: "",
             fontSize: "1em",
             textColor: "#fff",
-            childID: "",
-            childClassName: "",
-            nodeParent: "",
-            nodeChildren: []
         }
     }
 
@@ -50,13 +45,8 @@ export default class Node extends Component {
             fillColor: this.props.fillColor ? this.props.fillColor : this.state.fillColor,
             strokeColor: this.props.strokeColor ? this.props.strokeColor : this.state.strokeColor,
             transform: this.props.transform ? this.props.transform : this.state.transform,
-            text: this.props.text ? this.props.text : this.state.text,
             fontSize: this.props.fontSize ? this.props.fontSize : this.state.fontSize,
             textColor: this.props.textColor ? this.props.textColor : this.state.textColor,
-            childID: this.props.childID ? this.props.childID : this.state.childID,
-            childClassName: this.props.childClassName ? this.props.childClassName : this.state.childClassName,
-            nodeParent: this.props.nodeParent ? this.props.nodeParent : this.state.nodeParent,
-            nodeChildren: this.props.nodeChildren ? this.props.nodeChildren : this.state.nodeChildren
         });
     }
 
@@ -83,10 +73,11 @@ export default class Node extends Component {
     render() {
         return (
             <g transform={this.state.transform} 
-                id={this.state.childID} 
-                className={this.state.childClassName}
-                data-parent={this.state.nodeParent}
-                data-children={this.state.nodeChildren.join(',')}    
+                id={this.props.childID} 
+                className={this.props.childClassName}
+                data-parent={this.props.nodeParent}
+                data-children={this.props.nodeChildren.join(',')} 
+                ref={this.nodeHolder}   
             > 
                 <path 
                     d={this.generatePath()}
@@ -103,7 +94,7 @@ export default class Node extends Component {
                             fontFamily={"'Open Sans', sans-serif"}
                             style={{"pointerEvents":"none"}}
                     >
-                        {this.state.text}
+                        {this.props.text}
                     </text> 
                 </g>
             </g>

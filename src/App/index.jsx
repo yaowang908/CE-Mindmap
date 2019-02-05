@@ -3,7 +3,6 @@ import MainNode from "../Components/MainNode.jsx";
 import Node from "../Components/Node";
 import styled from "styled-components";
 import PopupMenu from "../Components/PopupMenu/PopupMenu.jsx";
-import MenuFunctionAddLower from "../Components/PopupMenu/MenuFunctionAddLower.jsx";
 import $ from "jquery";
 
 import "../Components/Functions/ZoomFunction.jsx";
@@ -123,7 +122,6 @@ export default class App extends Component {
         }
     }
 
-
     componentWillMount() {
     }
 
@@ -131,7 +129,6 @@ export default class App extends Component {
     }
 
     render() {
-        const nodes = MenuFunctionAddLower(this.state.SVGChildren);
 
         return (
             <MainContainer>
@@ -149,7 +146,7 @@ export default class App extends Component {
                 >
                     <g id="mind_map_node_container" width="100%" height="100%">
                         <MainNode>Here is main nodeHere is main nodeHere is main node</MainNode>
-                        {nodes}
+                        {/* {nodes} */}
                         {/* //TODO: not rendering */}
                     </g>
                 </svg>
