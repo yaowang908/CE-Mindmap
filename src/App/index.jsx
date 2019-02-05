@@ -4,6 +4,7 @@ import Node from "../Components/Node";
 import styled from "styled-components";
 import PopupMenu from "../Components/PopupMenu/PopupMenu.jsx";
 import MenuFunctionAddLower from "../Components/PopupMenu/MenuFunctionAddLower.jsx";
+import $ from "jquery";
 
 import "../Components/Functions/ZoomFunction.jsx";
 
@@ -106,7 +107,7 @@ export default class App extends Component {
                     return node;
                 });
             }
-
+            //FIXME: siblings isnot display correct
             new_SVGChildren.push({
                 id: _thisID,
                 siblings: _thisCallerChildren,
@@ -126,8 +127,11 @@ export default class App extends Component {
     componentWillMount() {
     }
 
+    componentDidMount() {
+    }
+
     render() {
-        const nodes = MenuFunctionAddLower(this.state.SVGChildren);//click to add
+        const nodes = MenuFunctionAddLower(this.state.SVGChildren);
 
         return (
             <MainContainer>
@@ -146,6 +150,7 @@ export default class App extends Component {
                     <g id="mind_map_node_container" width="100%" height="100%">
                         <MainNode>Here is main nodeHere is main nodeHere is main node</MainNode>
                         {nodes}
+                        {/* //TODO: not rendering */}
                     </g>
                 </svg>
                 <input id="node_text_editor" type="text" style={{"display":"none","position":"absolute","top":'0',"left":"0"}}/> 
