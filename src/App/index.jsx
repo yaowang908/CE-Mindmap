@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import MainNode from "../Components/MainNode.jsx";
 import Node from "../Components/Node";
+import OtherNodes from "../Components/OtherNodes.jsx";
 import styled from "styled-components";
 import PopupMenu from "../Components/PopupMenu/PopupMenu.jsx";
+import {withCookies, Cookies} from 'react-cookie';
 import $ from "jquery";
 
 import "../Components/Functions/ZoomFunction.jsx";
@@ -14,11 +16,14 @@ const MainContainer =styled.div`
 `;
 
 
-export default class App extends Component {
+class App extends Component {
     constructor(props) {
         super(props);
         this._onClick = this._onClick.bind(this);
         this._addChildren = this._addChildren.bind(this);
+        this.setCookie = this.setCookie.bind(this);
+        this.getCookie = this.getCookie.bind(this);
+        this.cookies = new Cookies;
         this.state = {
             popupMenuDisplay: "none",
             popupMenuOffsetX: 0,
@@ -90,6 +95,10 @@ export default class App extends Component {
             let _thisID = "node_" + (Number(this.state.SVGChildrenNum)+1);//new node ID
             let _thisCallerChildren = (menuContext.callerChildren+'').split(',').slice();//copy array, to avoid edit origin
             _thisCallerChildren.push(_thisID);//add this new node to callerChildren
+
+            // this.setCookie("yao",'111');
+            // console.log(this.getCookie("Yao"));
+
             let _thisClass = menuContext.callerClass === "mainNode" ? 
                                 "level_1" :
                                 "level_" + (Number(menuContext.callerClass.split("_")[1])+1);
@@ -97,6 +106,7 @@ export default class App extends Component {
             let _thisChildren = [];
 
             let new_SVGChildren = this.state.SVGChildren.slice();//copy origin to avoid edit
+
             if(new_SVGChildren.filter(node=>node.id === _thisParent)){
                 //if _thisParent is an existing node in this list
                 new_SVGChildren = new_SVGChildren.map((node)=>{
@@ -114,15 +124,32 @@ export default class App extends Component {
                 parent: _thisParent,
                 children: []
             });
-
+            console.dir(new_SVGChildren);
             this.setState({
                 SVGChildren: new_SVGChildren,
-                SVGChildrenNum: this.state.SVGChildrenNum + 1
+                SVGChildrenNum: this.state.SVGChildrenNum + 1,
+                level_1_breakingIndex: Math.ceil(new_SVGChildren.length / 2)
             })
+
+            this.setCookie('SVGChildren',JSON.stringify(new_SVGChildren));
         }
     }
 
+    setCookie(name,value) {
+        this.cookies.set(name,value,{path:'/'});
+    }
+
+    getCookie(name) {
+        // console.log(cookies.get('myCat'));
+        return this.cookies.get(name);
+    }
+
     componentWillMount() {
+        console.log((this.getCookie('SVGChildren')));
+        this.setState({
+            SVGChildren: this.getCookie('SVGChildren') ? this.getCookie('SVGChildren') : this.state.SVGChildren
+        }); 
+
     }
 
     componentDidMount() {
@@ -145,13 +172,15 @@ export default class App extends Component {
                     xmlnsXlink="http://www.w3.org/1999/xlink"
                 >
                     <g id="mind_map_node_container" width="100%" height="100%">
-                        <MainNode>Here is main nodeHere is main nodeHere is main node</MainNode>
-                        {/* {nodes} */}
+                        <MainNode>Main Node</MainNode>
+                        <OtherNodes SVGChildren={this.state.SVGChildren}></OtherNodes>
                         {/* //TODO: not rendering */}
                     </g>
                 </svg>
                 <input id="node_text_editor" type="text" style={{"display":"none","position":"absolute","top":'0',"left":"0"}}/> 
             </MainContainer>       
         );
-    }
-}
+    }//end of render
+}//end of app class
+
+export default withCookies(App);
