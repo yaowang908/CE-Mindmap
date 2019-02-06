@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Node from "./Node.jsx";
 
-export default class MainNode extends Node {
+export default class MainNode extends Component {
     constructor(props){
         super(props);
         this.transformFormula = this.transformFormula.bind(this);
@@ -28,7 +28,8 @@ export default class MainNode extends Node {
                     transform={this.transformFormula()} 
                     text={this.props.children}
                     nodeParent={"none"}
-                    nodeChildren={[]} 
+                    nodeChildren={[]}
+                    getBoxRect={this.props.getBoxRect} 
             />
         );
     }

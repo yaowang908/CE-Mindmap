@@ -33,6 +33,7 @@ class App extends Component {
         this.setCookie = this.setCookie.bind(this);
         this.getCookie = this.getCookie.bind(this);
         this.clearNodes = this.clearNodes.bind(this);
+        this.getMainNodeRect = this.getMainNodeRect.bind(this);
         this.cookies = new Cookies;
         this.state = {
             popupMenuDisplay: "none",
@@ -47,12 +48,11 @@ class App extends Component {
             SVGChildren: [],
             SVGChildrenNum: 1
         }
-        console.log("init SVGChildrenNum: "+ this.state.SVGChildrenNum);
     }
 
     _onClick(e) {
         let element = document.elementFromPoint(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-        console.dir(element);
+        // console.dir(element);
         if(element.nodeName === "path") {//clicked on node
             // console.log("Clicked coordinates are: " + e.nativeEvent.offsetX+', '+e.nativeEvent.offsetY);
             // console.log("Clicked ele ID is: "+element.parentElement.id);
@@ -71,12 +71,6 @@ class App extends Component {
             if(this.state.popupMenuDisplay === "block") {//hide popup menu when click on empty space
                 this.setState({
                     popupMenuDisplay: "none",
-                    // popupMenuCallerInfo: {
-                    //                         id: this.state.popupMenuCallerInfo.id,
-                    //                         classList: this.state.popupMenuCallerInfo.classList,
-                    //                         parent: this.state.popupMenuCallerInfo.parent,
-                    //                         children: this.state.popupMenuCallerInfo.children    
-                    //                     }//return to init state
                 });
             }
         }
@@ -101,8 +95,8 @@ class App extends Component {
              * }
              */
             let _thisID = "node_" + (Number(this.state.SVGChildrenNum)+1);//new node ID
-            console.log("svgchildrenNum: "+this.state.SVGChildrenNum);
-            console.log("_thisID: "+_thisID);
+            // console.log("svgchildrenNum: "+this.state.SVGChildrenNum);
+            // console.log("_thisID: "+_thisID);
             let _thisCallerChildren = (menuContext.callerChildren+'').split(',').slice();//copy array, to avoid edit origin
             _thisCallerChildren.push(_thisID);//add this new node to callerChildren
 
@@ -176,6 +170,10 @@ class App extends Component {
     componentDidMount() {
     }
 
+    getMainNodeRect(para) {
+        console.dir(para);
+    }
+
     render() {
 
         return (
@@ -194,7 +192,7 @@ class App extends Component {
                     xmlnsXlink="http://www.w3.org/1999/xlink"
                 >
                     <g id="mind_map_node_container" width="100%" height="100%">
-                        <MainNode>Main Node</MainNode>
+                        <MainNode getBoxRect={this.getMainNodeRect}>Main Node</MainNode>
                         <OtherNodes SVGChildren={this.state.SVGChildren} 
                                     level_1_breakingIndex={this.state.level_1_breakingIndex}></OtherNodes>
                         {/* //TODO: not rendering */}

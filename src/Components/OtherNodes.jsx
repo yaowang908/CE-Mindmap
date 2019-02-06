@@ -42,8 +42,8 @@ export default class OtherNodes extends Component {
     }
 
     draw_level_1_nodes() {
-        console.log('SVGChildren: ');
-        console.dir(this.props.SVGChildren)
+        // console.log('SVGChildren: ');
+        // console.dir(this.props.SVGChildren)
         return this.props.SVGChildren.filter(node => node.class === 'level_1').map((element, index) => {
             // console.log(index);
             return <Node childClassName={element.class}
@@ -67,7 +67,7 @@ export default class OtherNodes extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log("Nextprops: "+ nextProps.level_1_breakingIndex);
+        // console.log("Nextprops: "+ nextProps.level_1_breakingIndex);
         this.setState({
             level_1_breakingIndex: nextProps.level_1_breakingIndex ? nextProps.level_1_breakingIndex : this.state.level_1_breakingIndex
         });

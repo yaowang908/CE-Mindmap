@@ -5,6 +5,7 @@ export default class Node extends Component {
     constructor(props) {
         super(props);
         this.generatePath = this.generatePath.bind(this);
+        this.returnBoxRect = this.returnBoxRect.bind(this);
         this.nodeHolder = React.createRef();
         this.textHolder = React.createRef();
         this.nodeBG = React.createRef();
@@ -63,6 +64,7 @@ export default class Node extends Component {
             // console.log("nodetext:");
             // console.dir(this.nodeText.current);
             let bbox = this.nodeText.current.getBBox();
+            this.returnBoxRect(bbox);
             let textWidth = bbox.width;
             let textHeight = bbox.height;
             this.setState({
@@ -72,8 +74,13 @@ export default class Node extends Component {
                             translate(-${textWidth / 2} -${(textHeight + 10)/ 2})
                             `
             });
-        }
-        
+        }       
+    }
+
+    returnBoxRect(boxRect) {
+        if(this.props.getBoxRect) {
+            this.props.getBoxRect(boxRect)
+        }  
     }
     
     render() {
