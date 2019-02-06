@@ -15,6 +15,15 @@ const MainContainer =styled.div`
     position: relative;
 `;
 
+const Menu = styled.div`
+    position: absolute;
+    left: 0;
+    width: 100px;
+    height:25px;
+    top: 0;
+    background-color: red;
+    z-index:2000;
+`;
 
 class App extends Component {
     constructor(props) {
@@ -23,6 +32,7 @@ class App extends Component {
         this._addChildren = this._addChildren.bind(this);
         this.setCookie = this.setCookie.bind(this);
         this.getCookie = this.getCookie.bind(this);
+        this.clearNodes = this.clearNodes.bind(this);
         this.cookies = new Cookies;
         this.state = {
             popupMenuDisplay: "none",
@@ -124,7 +134,7 @@ class App extends Component {
                 parent: _thisParent,
                 children: []
             });
-            console.dir(new_SVGChildren);
+            // console.dir(new_SVGChildren);
             this.setState({
                 SVGChildren: new_SVGChildren,
                 SVGChildrenNum: this.state.SVGChildrenNum + 1,
@@ -144,10 +154,21 @@ class App extends Component {
         return this.cookies.get(name);
     }
 
+    clearNodes() {
+        this.cookies.remove('SVGChildren',{path:'/'});
+        window.location.reload();
+        return false;
+
+    }
+
     componentWillMount() {
-        console.log((this.getCookie('SVGChildren')));
+        // console.log((this.getCookie('SVGChildren')));
+        let _temp = this.getCookie('SVGChildren') ? this.getCookie('SVGChildren') : this.state.SVGChildren;
+
         this.setState({
-            SVGChildren: this.getCookie('SVGChildren') ? this.getCookie('SVGChildren') : this.state.SVGChildren
+            SVGChildren: _temp,
+            SVGChildrenNum: _temp.length,
+            level_1_breakingIndex: Math.ceil(_temp.length/2)
         }); 
 
     }
@@ -159,6 +180,7 @@ class App extends Component {
 
         return (
             <MainContainer>
+                <Menu onClick={this.clearNodes}> Clear Nodes </Menu>
                 <PopupMenu display={this.state.popupMenuDisplay} 
                             left={this.state.popupMenuOffsetX}
                             top={this.state.popupMenuOffsetY}
@@ -173,7 +195,8 @@ class App extends Component {
                 >
                     <g id="mind_map_node_container" width="100%" height="100%">
                         <MainNode>Main Node</MainNode>
-                        <OtherNodes SVGChildren={this.state.SVGChildren}></OtherNodes>
+                        <OtherNodes SVGChildren={this.state.SVGChildren} 
+                                    level_1_breakingIndex={this.state.level_1_breakingIndex}></OtherNodes>
                         {/* //TODO: not rendering */}
                     </g>
                 </svg>

@@ -49,6 +49,12 @@ export default class Node extends Component {
             textColor: this.props.textColor ? this.props.textColor : this.state.textColor,
         });
     }
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            startX: nextProps.startX ? nextProps.startX : this.state.startX,
+            startY: nextProps.startY ? nextProps.startY : this.state.startY
+        });
+    }
 
     componentDidMount() {
 
