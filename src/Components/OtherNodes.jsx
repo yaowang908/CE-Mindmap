@@ -7,6 +7,7 @@ export default class OtherNodes extends Component {
         this.draw_level_1_nodes = this.draw_level_1_nodes.bind(this);
         this.level_1_nodes_x_axis = this.level_1_nodes_x_axis.bind(this);
         this.level_1_nodes_y_axis = this.level_1_nodes_y_axis.bind(this);
+        this.level_1_nodes_siblings = this.level_1_nodes_siblings.bind(this);
         this.state={
             level_1_breakingIndex: 1
         }
@@ -28,11 +29,21 @@ export default class OtherNodes extends Component {
             //left
             return (200 + 100 * (index-_breakingIndex));
         }
-        
+    }
+
+    level_1_nodes_siblings(element) {
+        return this.props.SVGChildren
+                .filter(node => node.class === 'level_1')
+                .map(item => { 
+                    if (item.id !== element.id) { 
+                        return item.id 
+                    } 
+                })
     }
 
     draw_level_1_nodes() {
-        console.log('level_1_breakingIndex: ' + this.state.level_1_breakingIndex);
+        console.log('SVGChildren: ');
+        console.dir(this.props.SVGChildren)
         return this.props.SVGChildren.filter(node => node.class === 'level_1').map((element, index) => {
             // console.log(index);
             return <Node childClassName={element.class}
@@ -44,7 +55,7 @@ export default class OtherNodes extends Component {
                 transform={""}
                 text={"New Node"}
                 nodeParent={element.parent}
-                nodeChildren={[]}
+                nodeChildren={this.level_1_nodes_siblings(element)}
                 key={element.id}></Node>;
         });
     }

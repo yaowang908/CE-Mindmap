@@ -47,11 +47,12 @@ class App extends Component {
             SVGChildren: [],
             SVGChildrenNum: 1
         }
+        console.log("init SVGChildrenNum: "+ this.state.SVGChildrenNum);
     }
 
     _onClick(e) {
         let element = document.elementFromPoint(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-        // console.dir(element);
+        console.dir(element);
         if(element.nodeName === "path") {//clicked on node
             // console.log("Clicked coordinates are: " + e.nativeEvent.offsetX+', '+e.nativeEvent.offsetY);
             // console.log("Clicked ele ID is: "+element.parentElement.id);
@@ -84,14 +85,11 @@ class App extends Component {
 
     _addChildren(menuContext){
         if (menuContext) {
-            // console.log("Add Child now!!")//clicked popupmenu add lower
-            // console.log("menucontext: ");
-            // console.dir(menuContext);
             /**
              * 1. store all nodes in SVGChildren, mainNode doesn't belong to here.
              * 2. update this.state.SVGChildren when new node added.
              * 3. each node should have id and class, to identify itself in which level.
-             * 4. nodes are rendered in render() by MenuFunctionAddLower().
+             * 4. nodes are rendered in <OtherNodes>
              * 5. refer to all nodes by ID
              *  */
             /**
@@ -103,6 +101,8 @@ class App extends Component {
              * }
              */
             let _thisID = "node_" + (Number(this.state.SVGChildrenNum)+1);//new node ID
+            console.log("svgchildrenNum: "+this.state.SVGChildrenNum);
+            console.log("_thisID: "+_thisID);
             let _thisCallerChildren = (menuContext.callerChildren+'').split(',').slice();//copy array, to avoid edit origin
             _thisCallerChildren.push(_thisID);//add this new node to callerChildren
 
@@ -126,7 +126,7 @@ class App extends Component {
                     return node;
                 });
             }
-            //FIXME: siblings isnot display correct
+            //sibling is stored in node html attribute data-children
             new_SVGChildren.push({
                 id: _thisID,
                 siblings: _thisCallerChildren,
@@ -143,7 +143,7 @@ class App extends Component {
 
             this.setCookie('SVGChildren',JSON.stringify(new_SVGChildren));
         }
-    }
+    }//end of _addChildren
 
     setCookie(name,value) {
         this.cookies.set(name,value,{path:'/'});
@@ -167,7 +167,7 @@ class App extends Component {
 
         this.setState({
             SVGChildren: _temp,
-            SVGChildrenNum: _temp.length,
+            SVGChildrenNum: _temp.length ? _temp.length : 1 , //if there is no cookie, set SVGChildrenNum = 1
             level_1_breakingIndex: Math.ceil(_temp.length/2)
         }); 
 
