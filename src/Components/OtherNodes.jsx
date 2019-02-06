@@ -21,7 +21,14 @@ export default class OtherNodes extends Component {
     }
 
     level_1_nodes_y_axis(index,_breakingIndex) {
-        return (200+100*index);
+        if(index<_breakingIndex) {
+            //right
+            return (200 + 100 * index);
+        } else {
+            //left
+            return (200 + 100 * (index-_breakingIndex));
+        }
+        
     }
 
     draw_level_1_nodes() {
