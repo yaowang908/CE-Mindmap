@@ -61,7 +61,29 @@ export default class Node extends Component {
         });
     }
 
-    componentDidMount() {
+    componentDidUpdate(prevProps,prevState) {
+        if(this.state.text !== prevState.text) {
+            if (this.nodeText.current) {
+                //adjust path width to text width
+                console.log("nodetext:");
+                console.dir(this.nodeText.current);
+                let bbox = this.nodeText.current.getBBox();
+                this.returnBoxRect(bbox);
+                let textWidth = bbox.width;
+                let textHeight = bbox.height;
+                console.log("Width: " + bbox.width);
+                this.setState({
+                    width: textWidth,
+                    height: textHeight + 10,
+                    transform: `
+                            translate(-${textWidth / 2} -${(textHeight + 10) / 2})
+                            `
+                });
+            } 
+        }
+    }
+
+    componentDidMount() {//only fire once!!!!!TODO:
         console.log("did mount fired!");
         if(this.nodeText.current) {
             //adjust path width to text width

@@ -184,12 +184,24 @@ class App extends Component {
         // console.dir(_thisNode);
 
         let _thisNodeID = _thisNode.id;
+        //store new content into cookie
+        let _SVGChildren = this.state.SVGChildren.slice();
+        _SVGChildren = _SVGChildren.map(child=>{
+            if(child.id === _thisNodeID) {
+                child.content = _content;
+            }
+            return child;
+        });
 
         this.setState({
+            SVGChildren: _SVGChildren,
             updateNodeID: _thisNodeID,
             updateNodeContent: _content,
             popupMenuDisplay: 'none'
         });
+
+        this.setCookie('SVGChildren', JSON.stringify(_SVGChildren));
+
     }
 
     render() {
