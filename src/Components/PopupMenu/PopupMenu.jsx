@@ -82,6 +82,7 @@ export default class PopupMenu extends Component {
             // console.dir(rect);
             let textHolder = callerNode.children[1].children[0];
             let formerText = textHolder.textContent;//get text content of this caller SVG node
+            console.log(formerText);
             let newText = "";//text holder for users input 
 
             editor.setAttribute("value", `${formerText}`);

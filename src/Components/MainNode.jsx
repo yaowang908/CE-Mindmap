@@ -18,6 +18,7 @@ export default class MainNode extends Component {
     }
 
     render(){ 
+        console.dir(this.props.SVGChildren);
         return(
             <Node childClassName={"mainNode"} 
                     childID={"node_1"} 
@@ -26,7 +27,7 @@ export default class MainNode extends Component {
                     width={this.state.width} 
                     height={this.state.height} 
                     transform={this.transformFormula()} 
-                    text={this.props.children}
+                text={this.props.updateNodeID === "node_1" ? (this.props.updateNodeContent ? this.props.updateNodeContent : this.props.SVGChildren[0].content) : this.props.SVGChildren[0].content}
                     nodeParent={"none"}
                     nodeChildren={[]}
                     getBoxRect={this.props.getBoxRect} 

@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 
+const SvgGroup = styled.svg`
+    cursor: move;
+`;
+
 export default class Node extends Component {
     constructor(props) {
         super(props);
@@ -65,13 +69,13 @@ export default class Node extends Component {
         if(this.state.text !== prevState.text) {
             if (this.nodeText.current) {
                 //adjust path width to text width
-                console.log("nodetext:");
-                console.dir(this.nodeText.current);
+                // console.log("nodetext:");
+                // console.dir(this.nodeText.current);
                 let bbox = this.nodeText.current.getBBox();
                 this.returnBoxRect(bbox);
                 let textWidth = bbox.width;
                 let textHeight = bbox.height;
-                console.log("Width: " + bbox.width);
+                // console.log("Width: " + bbox.width);
                 this.setState({
                     width: textWidth,
                     height: textHeight + 10,
@@ -84,16 +88,16 @@ export default class Node extends Component {
     }
 
     componentDidMount() {//only fire once!!!!!TODO:
-        console.log("did mount fired!");
+        // console.log("did mount fired!");
         if(this.nodeText.current) {
             //adjust path width to text width
-            console.log("nodetext:");
-            console.dir(this.nodeText.current);
+            // console.log("nodetext:");
+            // console.dir(this.nodeText.current);
             let bbox = this.nodeText.current.getBBox();
             this.returnBoxRect(bbox);
             let textWidth = bbox.width;
             let textHeight = bbox.height;
-            console.log("Width: "+bbox.width);
+            // console.log("Width: "+bbox.width);
             this.setState({
                 width: textWidth,
                 height: textHeight+10,
@@ -120,13 +124,14 @@ export default class Node extends Component {
 
     render() {
         return (
-            <g transform={this.state.transform} 
+            <SvgGroup transform={this.state.transform} 
                 id={this.props.childID} 
-                className={this.props.childClassName}
+                className={this.props.childClassName+' draggable'}
                 data-parent={this.props.nodeParent}
                 data-children={this.props.nodeChildren.join(',')} 
                 ref={this.nodeHolder}
-                onClick={this.popupMenu}   
+                onClick={this.popupMenu}
+                x={0}   
             > 
                 <path 
                     d={this.generatePath()}
@@ -146,7 +151,7 @@ export default class Node extends Component {
                         {this.state.text}
                     </text> 
                 </g>
-            </g>
+            </SvgGroup>
             
         );
     }

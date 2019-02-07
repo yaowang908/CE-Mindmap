@@ -5,6 +5,7 @@ import OtherNodes from "../Components/OtherNodes.jsx";
 import styled from "styled-components";
 import PopupMenu from "../Components/PopupMenu/PopupMenu.jsx";
 import {withCookies, Cookies} from 'react-cookie';
+import {startDrag,drag,endDrag} from '../Components/Functions/DraggableFunction.jsx';
 import $ from "jquery";
 
 import "../Components/Functions/ZoomFunction.jsx";
@@ -37,6 +38,7 @@ class App extends Component {
         this.displayPopupMenu = this.displayPopupMenu.bind(this);
         this.getNewNodeContent = this.getNewNodeContent.bind(this);
         this.cookies = new Cookies;
+        this.selectedDraggingElement = false;
         this.state = {
             popupMenuDisplay: "none",
             popupMenuOffsetX: 0,
@@ -47,7 +49,13 @@ class App extends Component {
                                     parent: "none",
                                     children: []                        
                                     },
-            SVGChildren: [],
+            SVGChildren: [{
+                id: "node_1",
+                siblings: [],
+                class: 'mainNode',
+                parent: [],
+                children: [],
+                content: 'Main Node1'}],
             SVGChildrenNum: 1,
             updateNodeID:'',
             updateNodeContent:''
@@ -68,6 +76,8 @@ class App extends Component {
     }
 
     displayPopupMenu(mouseEventClick) {//display popupmenu
+        // console.dir(mouseEventClick);
+        //TODO: shouldn't display when drag&drop
         this.setState({
             popupMenuOffsetX: mouseEventClick.offsetX,//clicked position abscissa
             popupMenuOffsetY: mouseEventClick.offsetY,//ordinate
@@ -173,6 +183,18 @@ class App extends Component {
     }
 
     componentDidMount() {
+        console.dir(this.mainSVG);
+        this.mainSVG.addEventListener("mousedown", startDrag.bind(this));
+        this.mainSVG.addEventListener("mousemove", drag.bind(this));
+        this.mainSVG.addEventListener("mouseup", endDrag.bind(this));
+        this.mainSVG.addEventListener("mouseleave", endDrag.bind(this));
+    }
+
+    componentWillUnmount(){
+        this.mainSVG.removeEventListener("mousedown", startDrag);
+        this.mainSVG.removeEventListener("mousemove", drag);
+        this.mainSVG.removeEventListener("mouseup", endDrag);
+        this.mainSVG.removeEventListener("mouseleave", endDrag);
     }
 
     getMainNodeRect(para) {
@@ -221,10 +243,14 @@ class App extends Component {
                     onClick={this.clickToHidePopupMenu} //click on svg hide popupmenu
                     xmlns="http://www.w3.org/2000/svg" 
                     xmlnsXlink="http://www.w3.org/1999/xlink"
+                    ref={elem=>this.mainSVG = elem}
                 >
                     <g id="mind_map_node_container" width="100%" height="100%">
-                        <MainNode getBoxRect={this.getMainNodeRect}
-                                  getMouseEventClick={this.displayPopupMenu}>Main Node</MainNode>
+                        <MainNode SVGChildren={this.state.SVGChildren} 
+                                  getBoxRect={this.getMainNodeRect}
+                                  getMouseEventClick={this.displayPopupMenu}
+                                  updateNodeContent={this.state.updateNodeContent}
+                                  updateNodeID={this.state.updateNodeID}>Main Node</MainNode>
                         <OtherNodes SVGChildren={this.state.SVGChildren} 
                                     level_1_breakingIndex={this.state.level_1_breakingIndex}
                                     getMouseEventClick={this.displayPopupMenu}

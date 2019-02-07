@@ -42,8 +42,8 @@ export default class OtherNodes extends Component {
     }
 
     draw_level_1_nodes() {
-        console.log('SVGChildren: ');
-        console.dir(this.props.SVGChildren)
+        // console.log('SVGChildren: ');
+        // console.dir(this.props.SVGChildren)
         return this.props.SVGChildren.filter(node => node.class === 'level_1').map((element, index) => {
             // console.log(element);
             return <Node childClassName={element.class}
