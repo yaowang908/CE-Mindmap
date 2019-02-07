@@ -55,7 +55,7 @@ class App extends Component {
                 class: 'mainNode',
                 parent: [],
                 children: [],
-                content: 'Main Node1'}],
+                content: 'Main Node'}],
             SVGChildrenNum: 1,
             updateNodeID:'',
             updateNodeContent:''
@@ -183,7 +183,7 @@ class App extends Component {
     }
 
     componentDidMount() {
-        console.dir(this.mainSVG);
+        // console.dir(this.mainSVG);
         this.mainSVG.addEventListener("mousedown", startDrag.bind(this));
         this.mainSVG.addEventListener("mousemove", drag.bind(this));
         this.mainSVG.addEventListener("mouseup", endDrag.bind(this));
@@ -202,6 +202,7 @@ class App extends Component {
     }
 
     getNewNodeContent(_content,_thisNode) {
+        //get called when clicked on node
         // console.log(_content);
         // console.dir(_thisNode);
 
@@ -214,7 +215,7 @@ class App extends Component {
             }
             return child;
         });
-
+        console.dir(_SVGChildren);
         this.setState({
             SVGChildren: _SVGChildren,
             updateNodeID: _thisNodeID,

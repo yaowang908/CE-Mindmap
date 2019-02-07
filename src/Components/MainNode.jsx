@@ -18,7 +18,7 @@ export default class MainNode extends Component {
     }
 
     render(){ 
-        console.dir(this.props.SVGChildren);
+        // console.dir(this.props.SVGChildren);
         return(
             <Node childClassName={"mainNode"} 
                     childID={"node_1"} 

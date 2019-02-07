@@ -132,6 +132,7 @@ export default class Node extends Component {
                 ref={this.nodeHolder}
                 onClick={this.popupMenu}
                 x={0}   
+                y={0}
             > 
                 <path 
                     d={this.generatePath()}
