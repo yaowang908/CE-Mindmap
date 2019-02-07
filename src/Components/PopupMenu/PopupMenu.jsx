@@ -82,10 +82,9 @@ export default class PopupMenu extends Component {
             // console.dir(rect);
             let textHolder = callerNode.children[1].children[0];
             let formerText = textHolder.textContent;//get text content of this caller SVG node
-            console.log(formerText);
-            let newText = "";//text holder for users input 
 
-            editor.setAttribute("value", `${formerText}`);
+            editor.setAttribute("value", formerText);
+            editor.value = formerText; //setAttribute(value) serves default value if value exist , it doesn't affect UI
             editor.setAttribute(
                 "style", `
                 left: ${rect.left}px;
@@ -97,6 +96,7 @@ export default class PopupMenu extends Component {
                 z-index: 1200;
             `);
             editor.focus();//set focus to input editor
+            console.log(editor.value);
         }
     }
 
@@ -104,15 +104,10 @@ export default class PopupMenu extends Component {
         let editor = document.getElementById("node_text_editor");
         let userInput;
         if((e.code === 'Enter' || e.code === 'NumpadEnter') && editor === document.activeElement) {
-            document.activeElement.blur();
-
             userInput = editor.value;
-
             //TODO:update node text
             //update node width
             this.props.getNewNodeContent(userInput, this.state.callerInfo);
-
-
             editor.setAttribute(
                 "style", `
                 left: 0px;
@@ -121,6 +116,9 @@ export default class PopupMenu extends Component {
                 position: absolute;
                 z-index: 1200;
             `);//hide editor
+            editor.setAttribute("value", '');//empty editor
+            editor.value = '';
+            document.activeElement.blur();
         }
     }
 
@@ -128,11 +126,8 @@ export default class PopupMenu extends Component {
         let editor = document.getElementById("node_text_editor");
         let userInput;
         if ((e.type === 'click') && e.target.id === 'mind_map') {
-            document.activeElement.blur();
             userInput = editor.value;
 
-            //TODO:update node text
-            //update node width
             this.props.getNewNodeContent(userInput, this.state.callerInfo);
 
             editor.setAttribute(
@@ -143,6 +138,9 @@ export default class PopupMenu extends Component {
                 position: absolute;
                 z-index: 1200;
             `);//hide editor
+            editor.setAttribute("value", '');//empty editor
+            editor.value = '';
+            document.activeElement.blur();
         }
     }
 
