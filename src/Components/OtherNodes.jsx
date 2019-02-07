@@ -42,10 +42,10 @@ export default class OtherNodes extends Component {
     }
 
     draw_level_1_nodes() {
-        // console.log('SVGChildren: ');
-        // console.dir(this.props.SVGChildren)
+        console.log('SVGChildren: ');
+        console.dir(this.props.SVGChildren)
         return this.props.SVGChildren.filter(node => node.class === 'level_1').map((element, index) => {
-            // console.log(index);
+            // console.log(element);
             return <Node childClassName={element.class}
                 childID={element.id}
                 startX={this.level_1_nodes_x_axis(index,this.state.level_1_breakingIndex)}//TODO:
@@ -53,9 +53,10 @@ export default class OtherNodes extends Component {
                 width={"100"}//original width
                 height={"50"}//original height
                 transform={""}
-                text={"New Node"}
+                text={this.props.updateNodeID === element.id ? (this.props.updateNodeContent ? this.props.updateNodeContent : "New Node") : "New Node"}
                 nodeParent={element.parent}
                 nodeChildren={this.level_1_nodes_siblings(element)}
+                getMouseEventClick={this.props.getMouseEventClick}
                 key={element.id}></Node>;
         });
     }

@@ -28,12 +28,14 @@ const Menu = styled.div`
 class App extends Component {
     constructor(props) {
         super(props);
-        this._onClick = this._onClick.bind(this);
+        this.clickToHidePopupMenu = this.clickToHidePopupMenu.bind(this);
         this._addChildren = this._addChildren.bind(this);
         this.setCookie = this.setCookie.bind(this);
         this.getCookie = this.getCookie.bind(this);
         this.clearNodes = this.clearNodes.bind(this);
         this.getMainNodeRect = this.getMainNodeRect.bind(this);
+        this.displayPopupMenu = this.displayPopupMenu.bind(this);
+        this.getNewNodeContent = this.getNewNodeContent.bind(this);
         this.cookies = new Cookies;
         this.state = {
             popupMenuDisplay: "none",
@@ -46,36 +48,39 @@ class App extends Component {
                                     children: []                        
                                     },
             SVGChildren: [],
-            SVGChildrenNum: 1
+            SVGChildrenNum: 1,
+            updateNodeID:'',
+            updateNodeContent:''
         }
     }
 
-    _onClick(e) {
+    clickToHidePopupMenu(e) {//hide popup menu
         let element = document.elementFromPoint(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
         // console.dir(element);
-        if(element.nodeName === "path") {//clicked on node
-            // console.log("Clicked coordinates are: " + e.nativeEvent.offsetX+', '+e.nativeEvent.offsetY);
-            // console.log("Clicked ele ID is: "+element.parentElement.id);
-            this.setState({
-                popupMenuOffsetX: e.nativeEvent.offsetX,//clicked position abscissa
-                popupMenuOffsetY: e.nativeEvent.offsetY,//ordinate
-                popupMenuDisplay: "block",
-                popupMenuCallerInfo: {
-                                        id : element.parentElement.id,
-                                        classList : element.parentElement.classList,
-                                        parent: element.parentElement.dataset.parent,
-                                        children: element.parentElement.dataset.children    
-                                        }//clicked node id and class 
-            });
-        } else {//clicked on svg container
-            if(this.state.popupMenuDisplay === "block") {//hide popup menu when click on empty space
+        if(element.nodeName !== "path") {//clicked on node
+            if (this.state.popupMenuDisplay === "block") {//hide popup menu when click on empty space
                 this.setState({
                     popupMenuDisplay: "none",
                 });
             }
-        }
+        } 
         // console.dir(element);
     }
+
+    displayPopupMenu(mouseEventClick) {//display popupmenu
+        this.setState({
+            popupMenuOffsetX: mouseEventClick.offsetX,//clicked position abscissa
+            popupMenuOffsetY: mouseEventClick.offsetY,//ordinate
+            popupMenuDisplay: "block",
+            popupMenuCallerInfo: {
+                id: mouseEventClick.path[1].id,
+                classList: mouseEventClick.path[1].classList,
+                parent: mouseEventClick.path[1].dataset.parent,
+                children: mouseEventClick.path[1].dataset.children
+            }//clicked node id and class 
+        });
+    }
+
 
     _addChildren(menuContext){
         if (menuContext) {
@@ -126,7 +131,8 @@ class App extends Component {
                 siblings: _thisCallerChildren,
                 class: _thisClass,
                 parent: _thisParent,
-                children: []
+                children: [],
+                content: ''
             });
             // console.dir(new_SVGChildren);
             this.setState({
@@ -156,9 +162,8 @@ class App extends Component {
     }
 
     componentWillMount() {
-        // console.log((this.getCookie('SVGChildren')));
         let _temp = this.getCookie('SVGChildren') ? this.getCookie('SVGChildren') : this.state.SVGChildren;
-
+        // console.dir(_temp);
         this.setState({
             SVGChildren: _temp,
             SVGChildrenNum: _temp.length ? _temp.length : 1 , //if there is no cookie, set SVGChildrenNum = 1
@@ -174,6 +179,19 @@ class App extends Component {
         console.dir(para);
     }
 
+    getNewNodeContent(_content,_thisNode) {
+        // console.log(_content);
+        // console.dir(_thisNode);
+
+        let _thisNodeID = _thisNode.id;
+
+        this.setState({
+            updateNodeID: _thisNodeID,
+            updateNodeContent: _content,
+            popupMenuDisplay: 'none'
+        });
+    }
+
     render() {
 
         return (
@@ -184,17 +202,22 @@ class App extends Component {
                             top={this.state.popupMenuOffsetY}
                             callerInfo={this.state.popupMenuCallerInfo}
                             clickToAdd={this._addChildren}
+                            getNewNodeContent={this.getNewNodeContent}
                 ></PopupMenu>
                 <svg
                     id="mind_map"
-                    onClick={this._onClick}
+                    onClick={this.clickToHidePopupMenu} //click on svg hide popupmenu
                     xmlns="http://www.w3.org/2000/svg" 
                     xmlnsXlink="http://www.w3.org/1999/xlink"
                 >
                     <g id="mind_map_node_container" width="100%" height="100%">
-                        <MainNode getBoxRect={this.getMainNodeRect}>Main Node</MainNode>
+                        <MainNode getBoxRect={this.getMainNodeRect}
+                                  getMouseEventClick={this.displayPopupMenu}>Main Node</MainNode>
                         <OtherNodes SVGChildren={this.state.SVGChildren} 
-                                    level_1_breakingIndex={this.state.level_1_breakingIndex}></OtherNodes>
+                                    level_1_breakingIndex={this.state.level_1_breakingIndex}
+                                    getMouseEventClick={this.displayPopupMenu}
+                                    updateNodeContent={this.state.updateNodeContent}
+                                    updateNodeID={this.state.updateNodeID}></OtherNodes>
                         {/* //TODO: not rendering */}
                     </g>
                 </svg>

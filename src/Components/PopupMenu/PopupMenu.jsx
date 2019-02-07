@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import Sectors from "./SectorMenu.jsx";
 import SectorText from "./SectorText.jsx";
-import MenuFunctionEdit from "./MenuFunctionEdit.jsx";
 
 
 const PopupMenuContainer = styled.div`
@@ -41,6 +40,8 @@ export default class PopupMenu extends Component {
         this._editOnClick = this._editOnClick.bind(this);
         this.setMenuContext = this.setMenuContext.bind(this);
         this.addLowerMenuClicked = this.addLowerMenuClicked.bind(this);
+        this.keyDownHandler = this.keyDownHandler.bind(this);
+        this.clickHandler = this.clickHandler.bind(this);
         this.state= {
             containerWidth: 400, 
             radius: 125,
@@ -74,17 +75,87 @@ export default class PopupMenu extends Component {
             //when user clicked edit menu
             console.log("Edit");
             let callerNode = document.getElementById(this.state.callerInfo.id);//get the actual node that user clicked on
-            MenuFunctionEdit(callerNode);
+            // let newNodeWidth = MenuFunctionEdit(callerNode);
+
+            let editor = document.getElementById("node_text_editor");
+            let rect = callerNode.getBoundingClientRect();//get target element position
+            // console.dir(rect);
+            let textHolder = callerNode.children[1].children[0];
+            let formerText = textHolder.textContent;//get text content of this caller SVG node
+            let newText = "";//text holder for users input 
+
+            editor.setAttribute("value", `${formerText}`);
+            editor.setAttribute(
+                "style", `
+                left: ${rect.left}px;
+                top: ${rect.top + rect.height / 2}px;
+                width: ${rect.width}px;
+                height: ${rect.height / 2}px;
+                display: block;
+                position: absolute;
+                z-index: 1200;
+            `);
+            editor.focus();//set focus to input editor
+        }
+    }
+
+    keyDownHandler(e) {
+        let editor = document.getElementById("node_text_editor");
+        let userInput;
+        if((e.code === 'Enter' || e.code === 'NumpadEnter') && editor === document.activeElement) {
+            document.activeElement.blur();
+
+            userInput = editor.value;
+
+            //TODO:update node text
+            //update node width
+            this.props.getNewNodeContent(userInput, this.state.callerInfo);
+
+
+            editor.setAttribute(
+                "style", `
+                left: 0px;
+                top: 0px;
+                display: none;
+                position: absolute;
+                z-index: 1200;
+            `);//hide editor
+        }
+    }
+
+    clickHandler(e) {
+        let editor = document.getElementById("node_text_editor");
+        let userInput;
+        if ((e.type === 'click') && e.target.id === 'mind_map') {
+            document.activeElement.blur();
+            userInput = editor.value;
+
+            //TODO:update node text
+            //update node width
+            this.props.getNewNodeContent(userInput, this.state.callerInfo);
+
+            editor.setAttribute(
+                "style", `
+                left: 0px;
+                top: 0px;
+                display: none;
+                position: absolute;
+                z-index: 1200;
+            `);//hide editor
         }
     }
 
     componentDidMount() {
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
+        window.addEventListener("keydown",this.keyDownHandler);
+        window.addEventListener("click",this.clickHandler);
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateWindowDimensions);
+        window.removeEventListener("keydown", this.keyDownHandler);
+        window.removeEventListener("click", this.clickHandler);
     }
 
     updateWindowDimensions() {

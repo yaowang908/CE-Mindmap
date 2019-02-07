@@ -6,6 +6,7 @@ export default class Node extends Component {
         super(props);
         this.generatePath = this.generatePath.bind(this);
         this.returnBoxRect = this.returnBoxRect.bind(this);
+        this.popupMenu = this.popupMenu.bind(this);
         this.nodeHolder = React.createRef();
         this.textHolder = React.createRef();
         this.nodeBG = React.createRef();
@@ -21,6 +22,7 @@ export default class Node extends Component {
             transform: "",
             fontSize: "1em",
             textColor: "#fff",
+            text:''
         }
     }
 
@@ -48,25 +50,28 @@ export default class Node extends Component {
             transform: this.props.transform ? this.props.transform : this.state.transform,
             fontSize: this.props.fontSize ? this.props.fontSize : this.state.fontSize,
             textColor: this.props.textColor ? this.props.textColor : this.state.textColor,
+            text: this.props.text ? this.props.text : this.state.text,
         });
     }
     componentWillReceiveProps(nextProps) {
         this.setState({
             startX: nextProps.startX ? nextProps.startX : this.state.startX,
-            startY: nextProps.startY ? nextProps.startY : this.state.startY
+            startY: nextProps.startY ? nextProps.startY : this.state.startY,
+            text: nextProps.text ? nextProps.text : this.state.text,
         });
     }
 
     componentDidMount() {
-
+        console.log("did mount fired!");
         if(this.nodeText.current) {
             //adjust path width to text width
-            // console.log("nodetext:");
-            // console.dir(this.nodeText.current);
+            console.log("nodetext:");
+            console.dir(this.nodeText.current);
             let bbox = this.nodeText.current.getBBox();
             this.returnBoxRect(bbox);
             let textWidth = bbox.width;
             let textHeight = bbox.height;
+            console.log("Width: "+bbox.width);
             this.setState({
                 width: textWidth,
                 height: textHeight+10,
@@ -83,6 +88,14 @@ export default class Node extends Component {
         }  
     }
     
+    popupMenu(e) {
+        // console.dir(e.nativeEvent);
+        if (this.props.getMouseEventClick) {
+            this.props.getMouseEventClick(e.nativeEvent);
+        }
+        //pass click event data back to parent 
+    }
+
     render() {
         return (
             <g transform={this.state.transform} 
@@ -90,7 +103,8 @@ export default class Node extends Component {
                 className={this.props.childClassName}
                 data-parent={this.props.nodeParent}
                 data-children={this.props.nodeChildren.join(',')} 
-                ref={this.nodeHolder}   
+                ref={this.nodeHolder}
+                onClick={this.popupMenu}   
             > 
                 <path 
                     d={this.generatePath()}
@@ -107,7 +121,7 @@ export default class Node extends Component {
                             fontFamily={"'Open Sans', sans-serif"}
                             style={{"pointerEvents":"none"}}
                     >
-                        {this.props.text}
+                        {this.state.text}
                     </text> 
                 </g>
             </g>

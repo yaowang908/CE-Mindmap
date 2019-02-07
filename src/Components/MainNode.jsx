@@ -30,6 +30,7 @@ export default class MainNode extends Component {
                     nodeParent={"none"}
                     nodeChildren={[]}
                     getBoxRect={this.props.getBoxRect} 
+                    getMouseEventClick={this.props.getMouseEventClick}
             />
         );
     }
