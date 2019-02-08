@@ -39,6 +39,7 @@ class App extends Component {
         this.getNewNodeContent = this.getNewNodeContent.bind(this);
         this.cookies = new Cookies;
         this.selectedDraggingElement = false;
+        this.currentMouseDownPosition = [];
         this.state = {
             popupMenuDisplay: "none",
             popupMenuOffsetX: 0,

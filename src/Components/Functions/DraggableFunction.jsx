@@ -3,7 +3,7 @@ export function startDrag(event) {
     if (event.path[1].classList && event.path[1].classList.contains('draggable')) {
         console.log('draggable');
         this.selectedDraggingElement = event.path[1];
-
+        this.currentMouseDownPosition = [event.clientX,event.clientY];
     }
     
 }
@@ -25,29 +25,32 @@ export function drag(event) {
 
     if (this.selectedDraggingElement) {
         event.preventDefault();
-        console.dir(event);
 
         let dragX = event.clientX;
         let dragY = event.clientY;
 
         //get current node position
-        let currentPosition = event.path[1].firstChild.attributes[0].nodeValue.trim().split("\n");
-        currentPosition = currentPosition[0].split(' ')[1].split(',');
-        let currentX = currentPosition[0];
-        let currentY = currentPosition[1];
+        let currentNodePosition = event.path[1].firstChild.attributes[0].nodeValue.trim().split("\n");
+        currentNodePosition = currentNodePosition[0].split(' ')[1].split(',');
+        //get current mousedown position
+        let currentX = this.currentMouseDownPosition[0];
+        let currentY = this.currentMouseDownPosition[1];
 
         let deltaX = parseFloat(dragX - currentX);
         let deltaY = parseFloat(dragY - currentY);
+        //TODO: current mouse position - mousedown position = delta position
 
         let x = parseFloat(this.selectedDraggingElement.getAttributeNS(null,'x'));
         let y = parseFloat(this.selectedDraggingElement.getAttributeNS(null,'y'));
 
-        console.log("x: "+x);
-        console.log("y: "+y);
-        console.log("deltax: "+deltaX);
-        console.log("deltay: "+deltaY);
-        // this.selectedDraggingElement.setAttributeNS(null,"x",x+deltaX);
-        // this.selectedDraggingElement.setAttributeNS(null,"y",y+deltaY);
+        if(!(isNaN(deltaX)) && !(isNaN(deltaY))) {
+            this.selectedDraggingElement.setAttributeNS(null, "x", deltaX );
+            this.selectedDraggingElement.setAttributeNS(null, "y", deltaY );
+        } else {
+            //mouse leave node
+            return;
+        }
+        
         //x is relative to current position
     }
 
@@ -59,6 +62,7 @@ export function endDrag(event) {
         // selectedElement = null;
         console.log('end drag');
         this.selectedDraggingElement = null;
+        this.currentMouseDownPosition = [];
     }
     
 }
