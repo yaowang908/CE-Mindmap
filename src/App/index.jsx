@@ -56,6 +56,7 @@ class App extends Component {
                 class: 'mainNode',
                 parent: [],
                 children: [],
+                position: [],
                 content: 'Main Node'}],
             SVGChildrenNum: 1,
             updateNodeID:'',
@@ -143,6 +144,7 @@ class App extends Component {
                 class: _thisClass,
                 parent: _thisParent,
                 children: [],
+                position:[],
                 content: ''
             });
             // console.dir(new_SVGChildren);

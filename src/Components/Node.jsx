@@ -131,8 +131,8 @@ export default class Node extends Component {
                 data-children={this.props.nodeChildren.join(',')} 
                 ref={this.nodeHolder}
                 onClick={this.popupMenu}
-                x={0}   
-                y={0}
+                x={this.props.x ? this.props.x : 0}   
+                y={this.props.y ? this.props.y : 0}
             > 
                 <path 
                     d={this.generatePath()}

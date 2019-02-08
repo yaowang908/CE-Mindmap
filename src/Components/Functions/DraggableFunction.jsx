@@ -1,3 +1,5 @@
+import { yellow } from "ansi-colors";
+
 export function startDrag(event) {
     //startDrag
     if (event.path[1].classList && event.path[1].classList.contains('draggable')) {
@@ -61,6 +63,22 @@ export function endDrag(event) {
     if (this.selectedDraggingElement) {
         // selectedElement = null;
         console.log('end drag');
+        console.dir(this.selectedDraggingElement);
+        let x = parseFloat(this.selectedDraggingElement.getAttributeNS(null, 'x'));
+        let y = parseFloat(this.selectedDraggingElement.getAttributeNS(null, 'y'));
+
+        let _thisSVGChildren = this.state.SVGChildren.slice();
+        _thisSVGChildren.map(element=>{
+            if(this.selectedDraggingElement.id === element.id) {
+                element.position = [x,y];
+                return element;
+            } else {
+                return element;
+            }
+        });
+        this.setCookie('SVGChildren', JSON.stringify(_thisSVGChildren));
+        console.log("x: "+x+", y: "+y);
+
         this.selectedDraggingElement = null;
         this.currentMouseDownPosition = [];
     }
