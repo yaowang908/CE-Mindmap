@@ -39,7 +39,9 @@ class App extends Component {
         this.getNewNodeContent = this.getNewNodeContent.bind(this);
         this.cookies = new Cookies;
         this.selectedDraggingElement = false;
-        this.currentMouseDownPosition = [];
+        this.currentMouseDownPosition = [];//get mouse down position for dragablefunction
+        this.currentNodePositionX = 0; //get base position for draggableFunction
+        this.currentNodePositionY = 0;
         this.state = {
             popupMenuDisplay: "none",
             popupMenuOffsetX: 0,
@@ -88,7 +90,7 @@ class App extends Component {
                 id: mouseEventClick.path[1].id,
                 classList: mouseEventClick.path[1].classList,
                 parent: mouseEventClick.path[1].dataset.parent,
-                children: mouseEventClick.path[1].dataset.children
+                siblings: mouseEventClick.path[1].dataset.siblings
             }//clicked node id and class 
         });
     }
@@ -114,11 +116,12 @@ class App extends Component {
             let _thisID = "node_" + (Number(this.state.SVGChildrenNum)+1);//new node ID
             // console.log("svgchildrenNum: "+this.state.SVGChildrenNum);
             // console.log("_thisID: "+_thisID);
+            console.log('Before adding child:')
+            console.dir(menuContext);
             let _thisCallerChildren = (menuContext.callerChildren+'').split(',').slice();//copy array, to avoid edit origin
             _thisCallerChildren.push(_thisID);//add this new node to callerChildren
-
-            // this.setCookie("yao",'111');
-            // console.log(this.getCookie("Yao"));
+            console.log('Added child:');
+            console.dir(_thisCallerChildren);
 
             let _thisClass = menuContext.callerClass === "mainNode" ? 
                                 "level_1" :
@@ -176,7 +179,7 @@ class App extends Component {
 
     componentWillMount() {
         let _temp = this.getCookie('SVGChildren') ? this.getCookie('SVGChildren') : this.state.SVGChildren;
-        // console.dir(_temp);
+        console.dir(_temp);
         this.setState({
             SVGChildren: _temp,
             SVGChildrenNum: _temp.length ? _temp.length : 1 , //if there is no cookie, set SVGChildrenNum = 1
@@ -218,7 +221,7 @@ class App extends Component {
             }
             return child;
         });
-        console.dir(_SVGChildren);
+        // console.dir(_SVGChildren);
         this.setState({
             SVGChildren: _SVGChildren,
             updateNodeID: _thisNodeID,

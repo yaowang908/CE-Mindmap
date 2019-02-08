@@ -33,17 +33,23 @@ export default class OtherNodes extends Component {
 
     level_1_nodes_siblings(element) {
         return this.props.SVGChildren
-                .filter(node => node.class === 'level_1')
+                .filter(node => {
+                    if(node.class === 'level_1'){
+                        if(node.id !== element.id) {
+                            return true;
+                        }
+                    } else {
+                        return false;
+                    }
+                })
                 .map(item => { 
-                    if (item.id !== element.id) { 
-                        return item.id 
-                    } 
+                    return item.id 
                 })
     }
 
     draw_level_1_nodes() {
-        console.log('SVGChildren: ');
-        console.dir(this.props.SVGChildren)
+        // console.log('SVGChildren: ');
+        // console.dir(this.props.SVGChildren)
         return this.props.SVGChildren.filter(node => node.class === 'level_1').map((element, index) => {
             // console.log(element);
             return <Node childClassName={element.class}
@@ -55,7 +61,7 @@ export default class OtherNodes extends Component {
                 transform={""}
                 text={this.props.updateNodeID === element.id ? (this.props.updateNodeContent ? this.props.updateNodeContent : element.content) : (element.content?element.content: "New Node")}
                 nodeParent={element.parent}
-                nodeChildren={this.level_1_nodes_siblings(element)}
+                nodeSiblings={this.level_1_nodes_siblings(element)}
                 getMouseEventClick={this.props.getMouseEventClick}
                 x = {element.position?element.position[0]:0 }
                 y = {element.position?element.position[1]:0 }

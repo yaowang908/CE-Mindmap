@@ -206,7 +206,7 @@ export default class PopupMenu extends Component {
         let _callerID = _thisCallerInfo.id;
         let _callerClass = _thisCallerInfo.classList[0];
         let _callerParent = _thisCallerInfo.parent;
-        let _callerChildren = _thisCallerInfo.children;
+        let _callerChildren = _thisCallerInfo.siblings;
 
         // console.log("ID: "+_callerID);
         // console.log("Class: "+_callerClass);

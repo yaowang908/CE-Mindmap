@@ -128,7 +128,7 @@ export default class Node extends Component {
                 id={this.props.childID} 
                 className={this.props.childClassName+' draggable'}
                 data-parent={this.props.nodeParent}
-                data-children={this.props.nodeChildren.join(',')} 
+                data-siblings={this.props.nodeSiblings? this.props.nodeSiblings.join(','): ''} 
                 ref={this.nodeHolder}
                 onClick={this.popupMenu}
                 x={this.props.x ? this.props.x : 0}   
