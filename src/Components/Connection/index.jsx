@@ -66,19 +66,81 @@ class Level_1_curve extends Component {
         }
     }
 
-
-
     render() {
         return(
             <Fragment>
-                {
+                {   
                     this.props.firstLevelNodeSpecs.map(node=>{
-                        console.dir(node);
-                        //TODO: pass in two end points of each curve
-                        return <Curve leftEnd={[100, 100]}
-                                    rightEnd={[500, 200]}
+                        if(this.props.mainNodeSpecs.left 
+                            && (this.props.mainNodeSpecs.right < node.specs.left 
+                                || node.specs.right < this.props.mainNodeSpecs.left    
+                                )
+                           ){//anchor point is on left or right border
+                            //mainNodeSpecs get passed in after parent node componentDidMount, 
+                            //so there is two statement, if(this.props.mainNodeSpecs.left) ruled out the other 
+                                /**
+                                 *          --------
+                                 *         |        |
+                                 *          --------   \
+                                 *                      \  
+                                 *                       \    --------
+                                 *                        \  |        |
+                                 *                            --------
+                                 */
+                            if(node.specs.left > this.props.mainNodeSpecs.right) {
+                                //node is to the right of main node
+                                return <Curve leftEnd={[this.props.mainNodeSpecs.right, (this.props.mainNodeSpecs.height / 2 + this.props.mainNodeSpecs.top)]}
+                                    rightEnd={[node.specs.left, (node.specs.height/2+node.specs.top)]}
+                                    start_node={'node_1'}
+                                    end_node={node.id}
                                     mainNodeSpecs={this.props.mainNodeSpecs}
                                     firstLevelNodeSpecs={this.props.firstLevelNodeSpecs}></Curve>;
+                            } else if(node.specs.right < this.props.mainNodeSpecs.left) {
+                                //node is to the left of main node
+                                return <Curve leftEnd={[node.specs.right, (node.specs.height/2+node.specs.top)]}
+                                    rightEnd={[this.props.mainNodeSpecs.left, (this.props.mainNodeSpecs.height / 2 + this.props.mainNodeSpecs.top)]}
+                                    start_node={'node_1'}
+                                    end_node={node.id}
+                                    mainNodeSpecs={this.props.mainNodeSpecs}
+                                    firstLevelNodeSpecs={this.props.firstLevelNodeSpecs}></Curve>;
+                            }
+                            
+                        } else if (this.props.mainNodeSpecs.left
+                                && (this.props.mainNodeSpecs.right >= node.specs.left
+                                    && node.specs.right >= this.props.mainNodeSpecs.left
+                                    )
+                                ){//anchor points are on top or bottom border of the two nodes
+                                    /**
+                                     *          --------
+                                     *         |        |
+                                     *          --------
+                                     *                  \
+                                     *               --------
+                                     *              |        |
+                                     *               --------
+                                     */
+                                if(this.props.mainNodeSpecs.top>node.specs.bottom) {
+                                    //node is to the top of main node
+                                    return <Curve leftEnd={[(node.specs.left+node.specs.width/2), node.specs.bottom]}
+                                        rightEnd={[(this.props.mainNodeSpecs.left + this.props.mainNodeSpecs.width/2), this.props.mainNodeSpecs.top]}
+                                        start_node={'node_1'}
+                                        end_node={node.id}
+                                        mainNodeSpecs={this.props.mainNodeSpecs}
+                                        firstLevelNodeSpecs={this.props.firstLevelNodeSpecs}></Curve>;
+
+                                } else if(this.props.mainNodeSpecs.bottom<node.specs.top) {
+                                    //node is to the bottom of main node
+                                    return <Curve leftEnd={[(this.props.mainNodeSpecs.left + this.props.mainNodeSpecs.width / 2), this.props.mainNodeSpecs.bottom]}
+                                        rightEnd={[(node.specs.left + node.specs.width / 2), node.specs.top]}
+                                        start_node={'node_1'}
+                                        end_node={node.id}
+                                        mainNodeSpecs={this.props.mainNodeSpecs}
+                                        firstLevelNodeSpecs={this.props.firstLevelNodeSpecs}></Curve>;
+                                }
+                        } else {
+                            // haven't passed in mainNode specs
+                        }
+                        
                     })
                 }
             </Fragment>
@@ -136,7 +198,7 @@ class Curve extends Component {
                             fill={this.state.fillColor}
                             stroke={this.state.strokeColor}
                             strokeWidth={this.state.strokeWidth}
-                            data-start_node={this.props.startNode}
+                            data-start_node={this.props.start_node}
                             data-end_node={this.props.end_node}/>
                     ;
         } else {
@@ -148,7 +210,7 @@ class Curve extends Component {
                             fill={this.state.fillColor}
                             stroke={this.state.strokeColor} 
                             strokeWidth={this.state.strokeWidth} 
-                            data-start_node={this.props.startNode}
+                            data-start_node={this.props.start_node}
                             data-end_node={this.props.end_node}/>
                    ;
         }
