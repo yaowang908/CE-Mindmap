@@ -110,7 +110,6 @@ export default class PopupMenu extends Component {
 
         if((e.code === 'Enter' || e.code === 'NumpadEnter') && editor === document.activeElement) {
             userInput = editor.value ? editor.value : userInput;
-            //TODO:update node text
             //update node width
             this.props.getNewNodeContent(userInput, this.state.callerInfo);
             editor.setAttribute(

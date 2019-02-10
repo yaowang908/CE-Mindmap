@@ -239,6 +239,7 @@ class App extends Component {
 
     _setStateSVGChildren(_newSVGChildren) {
         console.log('set state here');
+        console.dir(_newSVGChildren);
         if(_newSVGChildren.length !== 0) {//there is item in _newSVGChildren
             this.setState({
                 SVGChildren: _newSVGChildren
@@ -265,7 +266,7 @@ class App extends Component {
                     xmlnsXlink="http://www.w3.org/1999/xlink"
                     ref={elem=>this.mainSVG = elem}
                 > 
-                    <g id="mind_map_node_container" width="100%" height="100%">
+                    <svg id="mind_map_node_container" width="100%" height="100%" x='0' y='0'>
                         <MainNode SVGChildren={this.state.SVGChildren} 
                                   getMouseEventClick={this.displayPopupMenu}
                                   updateNodeContent={this.state.updateNodeContent}
@@ -276,7 +277,7 @@ class App extends Component {
                                     updateNodeContent={this.state.updateNodeContent}
                                     updateNodeID={this.state.updateNodeID}></OtherNodes>
                         <Connection SVGChildren={this.state.SVGChildren}></Connection>
-                    </g>
+                    </svg>
                 </svg>
                 <input id="node_text_editor" type="text" style={{"display":"none","position":"absolute","top":'0',"left":"0"}}/> 
             </MainContainer>       

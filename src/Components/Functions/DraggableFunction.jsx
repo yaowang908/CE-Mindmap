@@ -8,9 +8,18 @@ export function startDrag(event) {
         console.log('draggable');
         that.selectedDraggingElement = event.path[1];
         that.currentMouseDownPosition = [event.clientX,event.clientY];
+        if (that.selectedDraggingElement.id !== 'node_1'){
+            //node main node 
+            that.currentNodePositionX = Number(that.selectedDraggingElement.getAttributeNS(null, 'x'));
+            that.currentNodePositionY = Number(that.selectedDraggingElement.getAttributeNS(null, 'y'));
+        } else {
+            //main node
+            let group = document.getElementById('mind_map_node_container');
+            that.currentNodePositionX = Number(group.getAttributeNS(null, 'x'));
+            that.currentNodePositionY = Number(group.getAttributeNS(null, 'y'));
 
-        that.currentNodePositionX = Number(that.selectedDraggingElement.getAttributeNS(null, 'x'));
-        that.currentNodePositionY = Number(that.selectedDraggingElement.getAttributeNS(null, 'y'));
+        }
+        
 
         that.state.SVGChildren.map(node=>{
             that._preDraggingSVGChildren[node.id] = node.position;
@@ -53,30 +62,15 @@ export function drag(event) {
          *      get deltaX and deltaY as usual
          *      change all nodes position at once
          *      stored data in cookie
-         *      FIXME: mainNode moving speed increase 
+         *      mainNode moving speed increase 
          *              
          */ 
             if (!(isNaN(deltaX)) && !(isNaN(deltaY))) {
-                that._SVGChildren_draggable = that.state.SVGChildren.map(node => {
-                    
-                    let _thisNode = document.getElementById(node.id);
-                    
-                    // let _currentNodePositionX = Number(node.position[0] ? node.position[0] : 0); // init value, node.position = '' sometimes
-                    // let _currentNodePositionY = Number(node.position[1] ? node.position[1] : 0);
-                    let _thisItem = this._preDraggingSVGChildren[node.id]
-                    let _currentNodePositionX = Number(_thisItem[0]);
-                    let _currentNodePositionY = Number(_thisItem[1]);
-                    
-                    // console.log(_currentNodePositionX);
 
-                    _thisNode.setAttributeNS(null, "x", _currentNodePositionX + deltaX);
-                    _thisNode.setAttributeNS(null, "y", _currentNodePositionY + deltaY);
-                    node.position = [_currentNodePositionX + deltaX, _currentNodePositionY + deltaY];
+                let group = document.getElementById('mind_map_node_container');
+                group.setAttributeNS(null,"x",that.currentNodePositionX + deltaX);
+                group.setAttributeNS(null,"y",that.currentNodePositionY + deltaY);
 
-                    // if (node.id === 'node_1') { console.log(node.position) }
-
-                    return node;
-                });
                 // console.log('drag');
             } else {
                 //mouse leave node
@@ -117,7 +111,7 @@ export function endDrag(event) {
             that.setCookie('SVGChildren', JSON.stringify(_thisSVGChildren));
         } else {//main node dragged
             // that._setStateSVGChildren(that._SVGChildren_draggable);
-            that.setCookie('SVGChildren', JSON.stringify(that._SVGChildren_draggable));
+            // that.setCookie('SVGChildren', JSON.stringify(that._SVGChildren_draggable));
         }
         
         // console.log("x: "+x+", y: "+y);

@@ -54,8 +54,8 @@ export default class OtherNodes extends Component {
             // console.log(element);
             return <Node childClassName={element.class}
                 childID={element.id}
-                startX={this.level_1_nodes_x_axis(index,this.state.level_1_breakingIndex)}//TODO:
-                startY={this.level_1_nodes_y_axis(index,this.state.level_1_breakingIndex)}//TODO:
+                startX={this.level_1_nodes_x_axis(index,this.state.level_1_breakingIndex)}
+                startY={this.level_1_nodes_y_axis(index,this.state.level_1_breakingIndex)}
                 width={"100"}//original width
                 height={"50"}//original height
                 transform={""}
