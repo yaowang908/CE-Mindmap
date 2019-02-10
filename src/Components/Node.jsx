@@ -1,10 +1,15 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 
+const SvgGroup = styled.svg`
+    cursor: move;
+`;
+
 export default class Node extends Component {
     constructor(props) {
         super(props);
         this.generatePath = this.generatePath.bind(this);
+        this.popupMenu = this.popupMenu.bind(this);
         this.nodeHolder = React.createRef();
         this.textHolder = React.createRef();
         this.nodeBG = React.createRef();
@@ -18,13 +23,9 @@ export default class Node extends Component {
             fillColor: "rgb(115,161,191)",
             strokeColor: "rgb(57,80,96)",
             transform: "",
-            text: "",
             fontSize: "1em",
             textColor: "#fff",
-            childID: "",
-            childClassName: "",
-            nodeParent: "",
-            nodeChildren: []
+            text:''
         }
     }
 
@@ -50,18 +51,43 @@ export default class Node extends Component {
             fillColor: this.props.fillColor ? this.props.fillColor : this.state.fillColor,
             strokeColor: this.props.strokeColor ? this.props.strokeColor : this.state.strokeColor,
             transform: this.props.transform ? this.props.transform : this.state.transform,
-            text: this.props.text ? this.props.text : this.state.text,
             fontSize: this.props.fontSize ? this.props.fontSize : this.state.fontSize,
             textColor: this.props.textColor ? this.props.textColor : this.state.textColor,
-            childID: this.props.childID ? this.props.childID : this.state.childID,
-            childClassName: this.props.childClassName ? this.props.childClassName : this.state.childClassName,
-            nodeParent: this.props.nodeParent ? this.props.nodeParent : this.state.nodeParent,
-            nodeChildren: this.props.nodeChildren ? this.props.nodeChildren : this.state.nodeChildren
+            text: this.props.text ? this.props.text : this.state.text,
+        });
+    }
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            startX: nextProps.startX ? nextProps.startX : this.state.startX,
+            startY: nextProps.startY ? nextProps.startY : this.state.startY,
+            text: nextProps.text ? nextProps.text : this.state.text,
         });
     }
 
-    componentDidMount() {
+    componentDidUpdate(prevProps,prevState) {
+        if(this.state.text !== prevState.text) {
+            if (this.nodeText.current) {
+                //adjust path width to text width
+                // console.log("nodetext:");
+                // console.dir(this.nodeText.current);
+                let bbox = this.nodeText.current.getBBox();
+                this.returnBoxRect(bbox);
+                let textWidth = bbox.width;
+                let textHeight = bbox.height;
+                // console.log("Width: " + bbox.width);
+                this.setState({
+                    width: textWidth,
+                    height: textHeight + 10,
+                    transform: `
+                            translate(-${textWidth / 2} -${(textHeight + 10) / 2})
+                            `
+                });
+            } 
+        }
+    }
 
+    componentDidMount() {//only fire once!!!!!
+        // console.log("did mount fired!");
         if(this.nodeText.current) {
             //adjust path width to text width
             // console.log("nodetext:");
@@ -69,6 +95,7 @@ export default class Node extends Component {
             let bbox = this.nodeText.current.getBBox();
             let textWidth = bbox.width;
             let textHeight = bbox.height;
+            // console.log("Width: "+bbox.width);
             this.setState({
                 width: textWidth,
                 height: textHeight+10,
@@ -76,17 +103,30 @@ export default class Node extends Component {
                             translate(-${textWidth / 2} -${(textHeight + 10)/ 2})
                             `
             });
-        }
-        
+        }       
     }
     
+    popupMenu(e) {
+        // console.dir(e.nativeEvent);
+        if (this.props.getMouseEventClick) {
+            this.props.getMouseEventClick(e.nativeEvent);
+        }
+        //pass click event data back to parent 
+    }
+
     render() {
+        // console.log('inside node component');
+        // console.dir(this.props);
         return (
-            <g transform={this.state.transform} 
-                id={this.state.childID} 
-                className={this.state.childClassName}
-                data-parent={this.state.nodeParent}
-                data-children={this.state.nodeChildren.join(',')}    
+            <SvgGroup transform={this.state.transform} 
+                id={this.props.childID} 
+                className={this.props.childClassName+' draggable'}
+                data-parent={this.props.nodeParent}
+                data-siblings={this.props.nodeSiblings? this.props.nodeSiblings.join(','): ''} 
+                ref={this.nodeHolder}
+                onClick={this.popupMenu}
+                x={this.props.x ? this.props.x : 0}   
+                y={this.props.y ? this.props.y : 0}
             > 
                 <path 
                     d={this.generatePath()}
@@ -106,7 +146,7 @@ export default class Node extends Component {
                         {this.state.text}
                     </text> 
                 </g>
-            </g>
+            </SvgGroup>
             
         );
     }

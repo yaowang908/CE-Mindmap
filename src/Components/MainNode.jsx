@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Node from "./Node.jsx";
 
-export default class MainNode extends Node {
+export default class MainNode extends Component {
     constructor(props){
         super(props);
         this.transformFormula = this.transformFormula.bind(this);
@@ -18,6 +18,7 @@ export default class MainNode extends Node {
     }
 
     render(){ 
+        // console.dir(this.props.SVGChildren);
         return(
             <Node childClassName={"mainNode"} 
                     childID={"node_1"} 
@@ -26,9 +27,12 @@ export default class MainNode extends Node {
                     width={this.state.width} 
                     height={this.state.height} 
                     transform={this.transformFormula()} 
-                    text={this.props.children}
+                    text={this.props.updateNodeID === "node_1" ? (this.props.updateNodeContent ? this.props.updateNodeContent : this.props.SVGChildren[0].content) : this.props.SVGChildren[0].content}
                     nodeParent={"none"}
-                    nodeChildren={[]} 
+                    nodeChildren={[]}
+                    getMouseEventClick={this.props.getMouseEventClick}
+                    x={this.props.SVGChildren[0].position ? this.props.SVGChildren[0].position[0] : 0}
+                    y={this.props.SVGChildren[0].position ? this.props.SVGChildren[0].position[1] : 0}
             />
         );
     }
