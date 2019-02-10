@@ -9,7 +9,6 @@ export default class Node extends Component {
     constructor(props) {
         super(props);
         this.generatePath = this.generatePath.bind(this);
-        this.returnBoxRect = this.returnBoxRect.bind(this);
         this.popupMenu = this.popupMenu.bind(this);
         this.nodeHolder = React.createRef();
         this.textHolder = React.createRef();
@@ -87,14 +86,13 @@ export default class Node extends Component {
         }
     }
 
-    componentDidMount() {//only fire once!!!!!TODO:
+    componentDidMount() {//only fire once!!!!!
         // console.log("did mount fired!");
         if(this.nodeText.current) {
             //adjust path width to text width
             // console.log("nodetext:");
             // console.dir(this.nodeText.current);
             let bbox = this.nodeText.current.getBBox();
-            this.returnBoxRect(bbox);
             let textWidth = bbox.width;
             let textHeight = bbox.height;
             // console.log("Width: "+bbox.width);
@@ -107,12 +105,6 @@ export default class Node extends Component {
             });
         }       
     }
-
-    returnBoxRect(boxRect) {
-        if(this.props.getBoxRect) {
-            this.props.getBoxRect(boxRect)
-        }  
-    }
     
     popupMenu(e) {
         // console.dir(e.nativeEvent);
@@ -123,6 +115,8 @@ export default class Node extends Component {
     }
 
     render() {
+        // console.log('inside node component');
+        // console.dir(this.props);
         return (
             <SvgGroup transform={this.state.transform} 
                 id={this.props.childID} 

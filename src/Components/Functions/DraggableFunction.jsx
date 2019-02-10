@@ -1,92 +1,132 @@
-import { yellow } from "ansi-colors";
 
 export function startDrag(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    let that = this;
     //startDrag
     if (event.path[1].classList && event.path[1].classList.contains('draggable')) {
         console.log('draggable');
-        this.selectedDraggingElement = event.path[1];
-        this.currentMouseDownPosition = [event.clientX,event.clientY];
+        that.selectedDraggingElement = event.path[1];
+        that.currentMouseDownPosition = [event.clientX,event.clientY];
 
-        this.currentNodePositionX = parseFloat(this.selectedDraggingElement.getAttributeNS(null, 'x'));
-        this.currentNodePositionY = parseFloat(this.selectedDraggingElement.getAttributeNS(null, 'y'));
+        that.currentNodePositionX = Number(that.selectedDraggingElement.getAttributeNS(null, 'x'));
+        that.currentNodePositionY = Number(that.selectedDraggingElement.getAttributeNS(null, 'y'));
+
+        that.state.SVGChildren.map(node=>{
+            that._preDraggingSVGChildren[node.id] = node.position;
+        });//store all node position base on id of node
     }
     
 }
 
 export function drag(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    let that = this;
     //drag
-    
-    // if (this.selectedDraggingElement) {
-    //     event.preventDefault();
-    //     let transform = this.selectedDraggingElement.getAttributeNS(null, 'transform').trim().match(/\((.*?)\)/)[1];
-    //     let coordinates = transform.split(' ');
-    //     let x = parseFloat(coordinates[0]);
-    //     let y = parseFloat(coordinates[1]);
-
-    //     x = x + 1;
-
-    //     this.selectedDraggingElement.setAttributeNS(null, 'transform', `translate(${x} ${y})`);
-    // }
-
-    if (this.selectedDraggingElement) {
-        event.preventDefault();
+    if (that.selectedDraggingElement) {
 
         let dragX = event.clientX;
         let dragY = event.clientY;
 
-        //get current node position
-        // let currentNodePosition = event.path[1].firstChild.attributes[0].nodeValue.trim().split("\n");
-        // currentNodePosition = currentNodePosition[0].split(' ')[1].split(',');
-
         //get current mousedown position
-        let currentX = this.currentMouseDownPosition[0];
-        let currentY = this.currentMouseDownPosition[1];
+        let currentX = that.currentMouseDownPosition[0];
+        let currentY = that.currentMouseDownPosition[1];
 
-        let deltaX = parseFloat(dragX - currentX);
-        let deltaY = parseFloat(dragY - currentY);
+        let deltaX = Number(dragX - currentX);
+        let deltaY = Number(dragY - currentY);
 
-        if(!(isNaN(deltaX)) && !(isNaN(deltaY))) {
-            this.selectedDraggingElement.setAttributeNS(null, "x", this.currentNodePositionX+deltaX );
-            this.selectedDraggingElement.setAttributeNS(null, "y", this.currentNodePositionY+deltaY );
+        //TODO: if mainNode get dragged, every node should move together
 
+        if(that.selectedDraggingElement.id !== 'node_1') {
+            if (!(isNaN(deltaX)) && !(isNaN(deltaY))) {
+                that.selectedDraggingElement.setAttributeNS(null, "x", that.currentNodePositionX + deltaX);
+                that.selectedDraggingElement.setAttributeNS(null, "y", that.currentNodePositionY + deltaY);
+
+            } else {
+                //mouse leave node
+                return;
+            }
         } else {
-            //mouse leave node
-            return;
-        }
-        
-        //x is relative to current position
-    }
+        /**
+         *  if(mainNode get dragged)
+         *      get deltaX and deltaY as usual
+         *      change all nodes position at once
+         *      stored data in cookie
+         *      FIXME: mainNode moving speed increase 
+         *              
+         */ 
+            if (!(isNaN(deltaX)) && !(isNaN(deltaY))) {
+                that._SVGChildren_draggable = that.state.SVGChildren.map(node => {
+                    
+                    let _thisNode = document.getElementById(node.id);
+                    
+                    // let _currentNodePositionX = Number(node.position[0] ? node.position[0] : 0); // init value, node.position = '' sometimes
+                    // let _currentNodePositionY = Number(node.position[1] ? node.position[1] : 0);
+                    let _thisItem = this._preDraggingSVGChildren[node.id]
+                    let _currentNodePositionX = Number(_thisItem[0]);
+                    let _currentNodePositionY = Number(_thisItem[1]);
+                    
+                    // console.log(_currentNodePositionX);
 
+                    _thisNode.setAttributeNS(null, "x", _currentNodePositionX + deltaX);
+                    _thisNode.setAttributeNS(null, "y", _currentNodePositionY + deltaY);
+                    node.position = [_currentNodePositionX + deltaX, _currentNodePositionY + deltaY];
+
+                    // if (node.id === 'node_1') { console.log(node.position) }
+
+                    return node;
+                });
+                // console.log('drag');
+            } else {
+                //mouse leave node
+                return;
+            }
+            
+        }
+
+        //x is relative to current position
+    }//end of if
 }
 
 export function endDrag(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    let that = this;
     //endDrag
-    if (this.selectedDraggingElement) {
+    if (that.selectedDraggingElement) {
         // selectedElement = null;
         // console.log('end drag');
-        // console.dir(this.selectedDraggingElement);
+        // console.dir(that.selectedDraggingElement);
 
-        let x = parseFloat(this.selectedDraggingElement.getAttributeNS(null, 'x'));
-        let y = parseFloat(this.selectedDraggingElement.getAttributeNS(null, 'y'));
-        //have to get attribute again, otherwise node would jump back to original position
+        if (that.selectedDraggingElement.id !== 'node_1') {//not main node
+            let x = Number(that.selectedDraggingElement.getAttributeNS(null, 'x'));
+            let y = Number(that.selectedDraggingElement.getAttributeNS(null, 'y'));
+            //have to get attribute again, otherwise node would jump back to original position
 
 
-        let _thisSVGChildren = this.state.SVGChildren.slice();
-        _thisSVGChildren.map(element=>{
-            if(this.selectedDraggingElement.id === element.id) {
-                element.position = [x,y];
-                return element;
-            } else {
-                return element;
-            }
-        });
-        this.setCookie('SVGChildren', JSON.stringify(_thisSVGChildren));
+            let _thisSVGChildren = that.state.SVGChildren.slice();
+            _thisSVGChildren.map(element => {
+                if (that.selectedDraggingElement.id === element.id) {
+                    element.position = [x, y];
+                    return element;
+                } else {
+                    return element;
+                }
+            });
+            that.setCookie('SVGChildren', JSON.stringify(_thisSVGChildren));
+        } else {//main node dragged
+            // that._setStateSVGChildren(that._SVGChildren_draggable);
+            that.setCookie('SVGChildren', JSON.stringify(that._SVGChildren_draggable));
+        }
+        
         // console.log("x: "+x+", y: "+y);
 
-        this.selectedDraggingElement = null;
-        this.currentMouseDownPosition = [];
-        this.currentNodePositionX = 0;
-        this.currentNodePositionY = 0;
+        that.selectedDraggingElement = null;
+        that.currentMouseDownPosition = [];
+        that.currentNodePositionX = 0;
+        that.currentNodePositionY = 0;
+        that._preDraggingSVGChildren = [];
     }
     
 }

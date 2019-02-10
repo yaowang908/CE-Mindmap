@@ -6,7 +6,7 @@ import styled from "styled-components";
 import PopupMenu from "../Components/PopupMenu/PopupMenu.jsx";
 import {withCookies, Cookies} from 'react-cookie';
 import {startDrag,drag,endDrag} from '../Components/Functions/DraggableFunction.jsx';
-import $ from "jquery";
+import Connection from '../Components/Connection/index.jsx';
 
 import "../Components/Functions/ZoomFunction.jsx";
 
@@ -34,14 +34,18 @@ class App extends Component {
         this.setCookie = this.setCookie.bind(this);
         this.getCookie = this.getCookie.bind(this);
         this.clearNodes = this.clearNodes.bind(this);
-        this.getMainNodeRect = this.getMainNodeRect.bind(this);
         this.displayPopupMenu = this.displayPopupMenu.bind(this);
         this.getNewNodeContent = this.getNewNodeContent.bind(this);
         this.cookies = new Cookies;
+        //drag function
         this.selectedDraggingElement = false;
-        this.currentMouseDownPosition = [];//get mouse down position for dragablefunction
+        this.currentMouseDownPosition = [0,0];//get mouse down position for dragablefunction
         this.currentNodePositionX = 0; //get base position for draggableFunction
         this.currentNodePositionY = 0;
+        this._SVGChildren_draggable = [];
+        this._preDraggingSVGChildren = [];
+        this._setStateSVGChildren = this._setStateSVGChildren.bind(this);
+        //end-- drag function
         this.state = {
             popupMenuDisplay: "none",
             popupMenuOffsetX: 0,
@@ -58,7 +62,7 @@ class App extends Component {
                 class: 'mainNode',
                 parent: [],
                 children: [],
-                position: [],
+                position: [0,0],
                 content: 'Main Node'}],
             SVGChildrenNum: 1,
             updateNodeID:'',
@@ -147,7 +151,7 @@ class App extends Component {
                 class: _thisClass,
                 parent: _thisParent,
                 children: [],
-                position:[],
+                position:[0,0],
                 content: ''
             });
             // console.dir(new_SVGChildren);
@@ -203,10 +207,11 @@ class App extends Component {
         this.mainSVG.removeEventListener("mouseleave", endDrag);
     }
 
-    getMainNodeRect(para) {
-        console.dir(para);
+    componentDidUpdate(prevProps,prevState,snapshot) {
+        
     }
 
+//update node content
     getNewNodeContent(_content,_thisNode) {
         //get called when clicked on node
         // console.log(_content);
@@ -233,6 +238,15 @@ class App extends Component {
 
     }
 
+    _setStateSVGChildren(_newSVGChildren) {
+        console.log('set state here');
+        if(_newSVGChildren.length !== 0) {//there is item in _newSVGChildren
+            this.setState({
+                SVGChildren: _newSVGChildren
+            });
+        }
+    }
+
     render() {
 
         return (
@@ -251,10 +265,9 @@ class App extends Component {
                     xmlns="http://www.w3.org/2000/svg" 
                     xmlnsXlink="http://www.w3.org/1999/xlink"
                     ref={elem=>this.mainSVG = elem}
-                >
+                > 
                     <g id="mind_map_node_container" width="100%" height="100%">
                         <MainNode SVGChildren={this.state.SVGChildren} 
-                                  getBoxRect={this.getMainNodeRect}
                                   getMouseEventClick={this.displayPopupMenu}
                                   updateNodeContent={this.state.updateNodeContent}
                                   updateNodeID={this.state.updateNodeID}>Main Node</MainNode>
@@ -263,7 +276,7 @@ class App extends Component {
                                     getMouseEventClick={this.displayPopupMenu}
                                     updateNodeContent={this.state.updateNodeContent}
                                     updateNodeID={this.state.updateNodeID}></OtherNodes>
-                        {/* //TODO: not rendering */}
+                        <Connection SVGChildren={this.state.SVGChildren}></Connection>
                     </g>
                 </svg>
                 <input id="node_text_editor" type="text" style={{"display":"none","position":"absolute","top":'0',"left":"0"}}/> 

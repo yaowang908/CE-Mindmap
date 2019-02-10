@@ -30,7 +30,6 @@ export default class MainNode extends Component {
                     text={this.props.updateNodeID === "node_1" ? (this.props.updateNodeContent ? this.props.updateNodeContent : this.props.SVGChildren[0].content) : this.props.SVGChildren[0].content}
                     nodeParent={"none"}
                     nodeChildren={[]}
-                    getBoxRect={this.props.getBoxRect} 
                     getMouseEventClick={this.props.getMouseEventClick}
                     x={this.props.SVGChildren[0].position ? this.props.SVGChildren[0].position[0] : 0}
                     y={this.props.SVGChildren[0].position ? this.props.SVGChildren[0].position[1] : 0}
