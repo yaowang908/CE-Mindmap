@@ -25,8 +25,6 @@ export default class Connection extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log('New Props')
-        console.dir(nextProps);
         this.setState({
             SVGChildren: nextProps.SVGChildren ? nextProps.SVGChildren : this.state.SVGChildren
         });
@@ -58,6 +56,15 @@ export default class Connection extends Component {
                 firstLevelNodeSpecs: this.getFirstLevelNodeSpecs()
             });
         }, 0);   
+    }
+
+    componentWillUpdate() {
+        setTimeout(() => {//otherwise height and bottom will be rideculous big
+            this.setState({
+                mainNodeSpecs: this.getMainNodeSpecs(),
+                firstLevelNodeSpecs: this.getFirstLevelNodeSpecs()
+            });
+        }, 0);
     }
 
     render() {

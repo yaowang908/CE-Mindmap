@@ -68,13 +68,9 @@ export default class Node extends Component {
         if(this.state.text !== prevState.text) {
             if (this.nodeText.current) {
                 //adjust path width to text width
-                // console.log("nodetext:");
-                // console.dir(this.nodeText.current);
                 let bbox = this.nodeText.current.getBBox();
-                this.returnBoxRect(bbox);
                 let textWidth = bbox.width;
                 let textHeight = bbox.height;
-                // console.log("Width: " + bbox.width);
                 this.setState({
                     width: textWidth,
                     height: textHeight + 10,
@@ -87,15 +83,11 @@ export default class Node extends Component {
     }
 
     componentDidMount() {//only fire once!!!!!
-        // console.log("did mount fired!");
         if(this.nodeText.current) {
             //adjust path width to text width
-            // console.log("nodetext:");
-            // console.dir(this.nodeText.current);
             let bbox = this.nodeText.current.getBBox();
             let textWidth = bbox.width;
             let textHeight = bbox.height;
-            // console.log("Width: "+bbox.width);
             this.setState({
                 width: textWidth,
                 height: textHeight+10,

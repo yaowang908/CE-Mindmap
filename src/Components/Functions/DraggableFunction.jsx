@@ -19,8 +19,6 @@ export function startDrag(event) {
             that.currentNodePositionY = Number(group.getAttributeNS(null, 'y'));
 
         }
-        
-
         that.state.SVGChildren.map(node=>{
             that._preDraggingSVGChildren[node.id] = node.position;
         });//store all node position base on id of node
@@ -78,7 +76,6 @@ export function drag(event) {
             }
             
         }
-
         //x is relative to current position
     }//end of if
 }
@@ -89,9 +86,6 @@ export function endDrag(event) {
     let that = this;
     //endDrag
     if (that.selectedDraggingElement) {
-        // selectedElement = null;
-        // console.log('end drag');
-        // console.dir(that.selectedDraggingElement);
 
         if (that.selectedDraggingElement.id !== 'node_1') {//not main node
             let x = Number(that.selectedDraggingElement.getAttributeNS(null, 'x'));
@@ -108,14 +102,16 @@ export function endDrag(event) {
                     return element;
                 }
             });
+            that._setStateSVGChildren(_thisSVGChildren);
             that.setCookie('SVGChildren', JSON.stringify(_thisSVGChildren));
         } else {//main node dragged
+            //dont store state when main node get dragged
+            //reset position to original when refresh
+
             // that._setStateSVGChildren(that._SVGChildren_draggable);
             // that.setCookie('SVGChildren', JSON.stringify(that._SVGChildren_draggable));
         }
         
-        // console.log("x: "+x+", y: "+y);
-
         that.selectedDraggingElement = null;
         that.currentMouseDownPosition = [];
         that.currentNodePositionX = 0;
