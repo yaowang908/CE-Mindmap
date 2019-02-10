@@ -3,8 +3,11 @@ import React, { Component, Fragment } from "react";
 export default class Connection extends Component {
     constructor(props) {
         super(props);
+        this.getMainNodeSpecs = this.getMainNodeSpecs.bind(this);
+        this.getFirstLevelNodeSpecs = this.getFirstLevelNodeSpecs.bind(this);
         this.state={
-
+            mainNodeSpecs : {},
+            firstLevelNodeSpecs : []
         };
     }
 
@@ -14,17 +17,48 @@ export default class Connection extends Component {
  * 2. get mainNode left & right anchor point  ===> calculation
  * 3. connect level_1 nodes to mainNode ===> <Curve>
  */
+    componentWillMount() {
+    }
+
+    getMainNodeSpecs() {
+        let _mainNode = document.getElementById('node_1').getBoundingClientRect();
+        return _mainNode;
+    }
+
+    getFirstLevelNodeSpecs() {
+        let _firstLevelNodesSpecs = [];
+        let _firstLevelNodes = this.props.SVGChildren.filter(node=>node.class === 'level_1');
+
+        _firstLevelNodes.map(node=>{
+            _firstLevelNodesSpecs.push({
+                id: node.id,
+                specs: document.getElementById(node.id).getBoundingClientRect()
+            });
+        });
+
+        return _firstLevelNodesSpecs;
+    }
+
+    componentDidMount() {
+        setTimeout(() => {//otherwise height and bottom will be rideculous big
+            this.setState({
+                mainNodeSpecs: this.getMainNodeSpecs(),
+                firstLevelNodeSpecs: this.getFirstLevelNodeSpecs()
+            });
+        }, 0);   
+    }
 
     render() {
         return(
             <Fragment>
-                <Curve leftEnd={[100, 100]} rightEnd={[500, 200]}></Curve>
+                <Level_1_curve mainNodeSpecs={this.state.mainNodeSpecs}
+                    firstLevelNodeSpecs={this.state.firstLevelNodeSpecs}></Level_1_curve>
             </Fragment>
         );
     }
 }
 
-class level_1_curve extends Component {
+class Level_1_curve extends Component {
     constructor(props) {
         super(props);
         this.state={
@@ -32,10 +66,21 @@ class level_1_curve extends Component {
         }
     }
 
+
+
     render() {
         return(
             <Fragment>
-
+                {
+                    this.props.firstLevelNodeSpecs.map(node=>{
+                        console.dir(node);
+                        //TODO: pass in two end points of each curve
+                        return <Curve leftEnd={[100, 100]}
+                                    rightEnd={[500, 200]}
+                                    mainNodeSpecs={this.props.mainNodeSpecs}
+                                    firstLevelNodeSpecs={this.props.firstLevelNodeSpecs}></Curve>;
+                    })
+                }
             </Fragment>
         );
     }

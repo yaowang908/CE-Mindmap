@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import MainNode from "../Components/MainNode.jsx";
-import Node from "../Components/Node";
 import OtherNodes from "../Components/OtherNodes.jsx";
 import styled from "styled-components";
 import PopupMenu from "../Components/PopupMenu/PopupMenu.jsx";
@@ -183,7 +182,7 @@ class App extends Component {
 
     componentWillMount() {
         let _temp = this.getCookie('SVGChildren') ? this.getCookie('SVGChildren') : this.state.SVGChildren;
-        console.dir(_temp);
+        // console.dir(_temp);
         this.setState({
             SVGChildren: _temp,
             SVGChildrenNum: _temp.length ? _temp.length : 1 , //if there is no cookie, set SVGChildrenNum = 1
