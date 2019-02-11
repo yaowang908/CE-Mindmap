@@ -138,6 +138,7 @@ export default class Node extends Component {
                         {this.state.text}
                     </text> 
                 </g>
+                {this.props.children}
             </SvgGroup>
             
         );

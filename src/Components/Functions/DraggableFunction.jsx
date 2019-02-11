@@ -69,6 +69,11 @@ export function drag(event) {
                 group.setAttributeNS(null,"x",that.currentNodePositionX + deltaX);
                 group.setAttributeNS(null,"y",that.currentNodePositionY + deltaY);
 
+                let connection = document.getElementById('connection');
+
+                connection.setAttributeNS(null, "x", `${-1 * (that.currentNodePositionX + deltaX)}`);
+                connection.setAttributeNS(null, "y", `${-1 * (that.currentNodePositionY + deltaY)}`);
+
                 // console.log('drag');
             } else {
                 //mouse leave node

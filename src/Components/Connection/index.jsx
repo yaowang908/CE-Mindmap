@@ -69,10 +69,10 @@ export default class Connection extends Component {
 
     render() {
         return(
-            <Fragment>
+            <svg id="connection" x="0" y="0">
                 <Level_1_curve mainNodeSpecs={this.state.mainNodeSpecs}
                     firstLevelNodeSpecs={this.state.firstLevelNodeSpecs}></Level_1_curve>
-            </Fragment>
+            </svg>
         );
     }
 }
