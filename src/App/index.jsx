@@ -121,10 +121,10 @@ class App extends Component {
             // console.log("_thisID: "+_thisID);
             console.log('Before adding child:')
             console.dir(menuContext);
-            let _thisCallerChildren = (menuContext.callerChildren+'').split(',').slice();//copy array, to avoid edit origin
-            _thisCallerChildren.push(_thisID);//add this new node to callerChildren
+            let _thisCallerSiblings = (menuContext.callerSiblings+'').split(',').slice();//copy array, to avoid edit origin
+            _thisCallerSiblings.push(_thisID);//add this new node to callerChildren
             console.log('Added child:');
-            console.dir(_thisCallerChildren);
+            console.dir(_thisCallerSiblings);
 
             let _thisClass = menuContext.callerClass === "mainNode" ? 
                                 "level_1" :
@@ -146,7 +146,7 @@ class App extends Component {
             //sibling is stored in node html attribute data-children
             new_SVGChildren.push({
                 id: _thisID,
-                siblings: _thisCallerChildren,
+                siblings: _thisCallerSiblings,
                 class: _thisClass,
                 parent: _thisParent,
                 children: [],
@@ -182,11 +182,11 @@ class App extends Component {
 
     componentWillMount() {
         let _temp = this.getCookie('SVGChildren') ? this.getCookie('SVGChildren') : this.state.SVGChildren;
-        // console.dir(_temp);
+        console.dir(_temp);
         this.setState({
             SVGChildren: _temp,
             SVGChildrenNum: _temp.length ? _temp.length : 1 , //if there is no cookie, set SVGChildrenNum = 1
-            level_1_breakingIndex: Math.ceil(_temp.length/2)
+            level_1_breakingIndex: Math.ceil(_temp.filter(node => node.class === 'level_1').length/2)
         }); 
 
     }

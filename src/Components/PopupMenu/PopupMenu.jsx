@@ -205,12 +205,12 @@ export default class PopupMenu extends Component {
         let _callerID = _thisCallerInfo.id;
         let _callerClass = _thisCallerInfo.classList[0];
         let _callerParent = _thisCallerInfo.parent;
-        let _callerChildren = _thisCallerInfo.siblings;
+        let _callerSiblings = _thisCallerInfo.siblings;
 
         // console.log("ID: "+_callerID);
         // console.log("Class: "+_callerClass);
         // console.log("Parent: "+_callerParent);
-        // console.log("Children: "+_callerChildren);
+        // console.log("Siblings: "+_callerSiblings);
 
         let index = ['popup_menu_0', 'popup_menu_1', 'popup_menu_2', 'popup_menu_3', 'popup_menu_4', 'popup_menu_5', 'popup_menu_6'];
         
@@ -226,7 +226,7 @@ export default class PopupMenu extends Component {
                     callerID: _callerID,
                     callerClass: _callerClass,
                     callerParent: _callerParent,
-                    callerChildren: _callerChildren
+                    callerSiblings: _callerSiblings
                 }
             });
             return tmp;

@@ -191,7 +191,7 @@ class Curve extends Component {
             rightEnd: [100,100],
             fillColor: 'none',
             strokeColor: '#07a',
-            strokeWidth: '5'
+            strokeWidth: '2'
         }
     }
     componentWillMount() {
