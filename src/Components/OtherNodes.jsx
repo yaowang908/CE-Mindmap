@@ -8,6 +8,7 @@ export default class OtherNodes extends Component {
         this.level_1_nodes_x_axis = this.level_1_nodes_x_axis.bind(this);
         this.level_1_nodes_y_axis = this.level_1_nodes_y_axis.bind(this);
         this.level_1_nodes_siblings = this.level_1_nodes_siblings.bind(this);
+        this.draw_lower_level_nodes = this.draw_lower_level_nodes.bind(this);
         this.state={
             level_1_breakingIndex: 1
         }
@@ -15,9 +16,9 @@ export default class OtherNodes extends Component {
 
     level_1_nodes_x_axis(index,_breakingIndex) {
         if(index<_breakingIndex) {
-            return 900;//right arm
+            return 800;//right arm
         } else {
-            return 300;//left arm
+            return 350;//left arm
         }
     }
 
@@ -65,8 +66,113 @@ export default class OtherNodes extends Component {
                 getMouseEventClick={this.props.getMouseEventClick}
                 x = {element.position?element.position[0]:0 }
                 y = {element.position?element.position[1]:0 }
-                key={element.id}></Node>;
+                key={element.id}>
+                {this.draw_lower_level_nodes(element,index,this.state.level_1_breakingIndex)}
+                </Node>;
         });
+    }
+
+    draw_lower_level_nodes(element,index,_level_1_breakingIndex) {
+        /** TODO:
+         * para: 
+         *      1. element is the current node, represent 
+         *      2. _level_1_breakingIndex
+         *  1. each level_1 node has a branch, contains all lower level children which belong to the node
+         *  2.   
+         */
+        let _direction;
+        if (index < _level_1_breakingIndex) {
+            //right
+            _direction = 'right';
+        } else {
+            //left
+            _direction = 'left';
+        }
+        
+         /**
+          *     element structure
+          *     {
+          *         children:[],
+          *         class:'',
+          *         content: '',
+          *         id: '',
+          *         parent: '',
+          *         position: [x,y],
+          *         siblings:[]
+          *     }
+          * 
+          */
+         let that = this;
+        function getBranchNodes(_thisNode) {
+            //recursively return child node chain
+            let _thisNodeChildren = that.props.SVGChildren.filter(node => node.parent === _thisNode.id);
+            if(_thisNodeChildren.length === 0) {
+                return [];//no child
+            } else {
+                return {
+                    nodes: _thisNodeChildren,
+                    children: _thisNodeChildren.map(x=>{return getBranchNodes(x)})
+                };
+            }
+            /**
+             *  suppose to return something like this
+             *  {
+             *      nodes:[],
+             *      children:{
+             *              nodes:'',
+             *              children:{}    
+             *              }
+             *  }
+             *  
+             */
+        } // end of getBranchNodes()
+
+        let _thisBranchNodes = getBranchNodes(element);
+
+        // console.dir(_thisBranchNodes.nodes);
+
+        function branchStructure(_obj) {
+            if (_obj.nodes) {//if has branch
+                // console.dir(_obj)
+                return _obj.nodes.map(e=>{
+                    //e = {children:[],
+                    //   * class: '',
+                    //   * content: '',
+                    //   * id: '',
+                    //   * parent: '',
+                    //   * position: [x, y],
+                    //   * siblings: []}
+                    return <Node childClassName={e.class}
+                                childID={e.id}
+                                startX={100}//FIXME:
+                                startY={100}//FIXME:
+                                width={"100"}//original width
+                                height={"50"}//original height
+                                transform={""}
+                                text={that.props.updateNodeID === e.id ? (that.props.updateNodeContent ? that.props.updateNodeContent : e.content) : (e.content ? e.content : "New Node")}
+                                nodeParent={e.parent}
+                                nodeSiblings={that.level_1_nodes_siblings(e)}
+                                getMouseEventClick={that.props.getMouseEventClick}
+                                x={e.position ? e.position[0] : 0}
+                                y={e.position ? e.position[1] : 0}
+                                key={e.id}>
+                                {
+                                    // console.dir(branchStructure(_obj.children));
+                                    _obj.children.map(item=>{
+                                        return branchStructure(item);
+                                    })
+                                }
+                            </Node>;
+                });
+            } else {
+                return false;
+            }
+        }
+
+        return branchStructure(_thisBranchNodes);
+
+       
+
     }
 
     componentWillMount(){

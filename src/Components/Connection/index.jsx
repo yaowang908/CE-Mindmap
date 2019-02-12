@@ -42,10 +42,9 @@ export default class Connection extends Component {
         _firstLevelNodes.map(node=>{
             _firstLevelNodesSpecs.push({
                 id: node.id,
-                specs: document.getElementById(node.id).getBoundingClientRect()
+                specs: document.getElementById(node.id).querySelectorAll('path')[0].getBoundingClientRect()
             });
         });
-
         return _firstLevelNodesSpecs;
     }
 

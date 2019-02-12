@@ -69,6 +69,7 @@ export default class PopupMenu extends Component {
     }
 
     _editOnClick(e){
+        e.stopPropagation();
         //popup menu onclick function
         let elementID = e.nativeEvent.target.id;
         if (elementID === "popup_menu_0") {
@@ -97,6 +98,10 @@ export default class PopupMenu extends Component {
             `);
             editor.focus();//set focus to input editor
             console.log(editor.value);
+
+            this.setState({//hide popup menu
+                display: "none"
+            });
         }
     }
 
@@ -127,14 +132,20 @@ export default class PopupMenu extends Component {
     }
 
     clickHandler(e) {
+        e.stopPropagation();
         let editor = document.getElementById("node_text_editor");
 
         let callerNode = document.getElementById(this.state.callerInfo.id);
         let textHolder = callerNode.children[1].children[0];
         let formerText = textHolder.textContent;//get text content of this caller SVG node
         let userInput = formerText ? formerText : '';
+        console.dir(e);
 
-        if ((e.type === 'click') && e.target.id === 'mind_map') {
+        if ((e.type === 'click') 
+                && e.target.id === 'mind_map' 
+                && editor === document.activeElement) {
+            console.log('click fired!');
+            console.dir(e);
             userInput = editor.value ? editor.value : userInput;
 
             this.props.getNewNodeContent(userInput, this.state.callerInfo);
@@ -155,15 +166,15 @@ export default class PopupMenu extends Component {
 
     componentDidMount() {
         this.updateWindowDimensions();
-        window.addEventListener('resize', this.updateWindowDimensions);
-        window.addEventListener("keydown",this.keyDownHandler);
-        window.addEventListener("click",this.clickHandler);
+        document.addEventListener('resize', this.updateWindowDimensions);
+        document.addEventListener("keydown",this.keyDownHandler);
+        document.addEventListener("click",this.clickHandler);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.updateWindowDimensions);
-        window.removeEventListener("keydown", this.keyDownHandler);
-        window.removeEventListener("click", this.clickHandler);
+        document.removeEventListener('resize', this.updateWindowDimensions);
+        document.removeEventListener("keydown", this.keyDownHandler);
+        document.removeEventListener("click", this.clickHandler);
     }
 
     updateWindowDimensions() {
@@ -198,6 +209,9 @@ export default class PopupMenu extends Component {
 
     componentWillReceiveProps(nextProps) {
         this.setMenuContext(nextProps);
+        this.setState({
+            display: nextProps.display ? nextProps.display : this.state.display,
+        });
     }
 
     setMenuContext(nextProps) {

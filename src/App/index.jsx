@@ -59,7 +59,7 @@ class App extends Component {
                 id: "node_1",
                 siblings: [],
                 class: 'mainNode',
-                parent: [],
+                parent: '',
                 children: [],
                 position: [0,0],
                 content: 'Main Node'}],
@@ -70,10 +70,10 @@ class App extends Component {
     }
 
     clickToHidePopupMenu(e) {//hide popup menu
+        e.stopPropagation();
         let element = document.elementFromPoint(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-        // console.dir(element);
-        if(element.nodeName !== "path") {//clicked on node
-            if (this.state.popupMenuDisplay === "block") {//hide popup menu when click on empty space
+        if (this.state.popupMenuDisplay === "block") {//hide popup menu when click on empty space
+            if(element.id === "mind_map") {//clicked on node
                 this.setState({
                     popupMenuDisplay: "none",
                 });

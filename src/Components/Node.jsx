@@ -10,6 +10,10 @@ export default class Node extends Component {
         super(props);
         this.generatePath = this.generatePath.bind(this);
         this.popupMenu = this.popupMenu.bind(this);
+        this.clickFlag = 0;//defer click and drag mouse event
+        this.mouseDownHandler = this.mouseDownHandler.bind(this);
+        this.mousemoveHandler = this.mousemoveHandler.bind(this);
+        this.mouseupHandler = this.mouseupHandler.bind(this);
         this.nodeHolder = React.createRef();
         this.textHolder = React.createRef();
         this.nodeBG = React.createRef();
@@ -95,13 +99,45 @@ export default class Node extends Component {
                             translate(-${textWidth / 2} -${(textHeight + 10)/ 2})
                             `
             });
-        }       
+        } 
+        this.nodeHolder.current.addEventListener("mousedown", this.mouseDownHandler ,false);
+        this.nodeHolder.current.addEventListener("mousemove", this.mousemoveHandler, false);
+        this.nodeHolder.current.addEventListener("mouseup", this.mouseupHandler, false);      
     }
     
+    componentWillUnmount() {
+        this.nodeHolder.current.removeEventListener("mousedown", this.mouseDownHandler);
+        this.nodeHolder.current.removeEventListener("mousemove", this.mousemoveHandler);
+        this.nodeHolder.current.removeEventListener("mouseup", this.mouseupHandler);
+    }
+
+    mouseDownHandler(e) {
+        // e.stopPropagation();
+        // e.preventDefault();
+        this.clickFlag = 0;
+    }
+
+    mousemoveHandler(e) {
+        // e.stopPropagation();
+        // e.preventDefault();
+        this.clickFlag = 1;
+    }
+
+    mouseupHandler(e) {
+        // e.stopPropagation();
+        // e.preventDefault();
+        if(this.clickFlag === 1) {
+            //drag
+        } else if(this.clickFlag === 0) {
+            //click
+            this.popupMenu(e);
+        }
+    }
+
     popupMenu(e) {
-        // console.dir(e.nativeEvent);
+        // console.dir(e);
         if (this.props.getMouseEventClick) {
-            this.props.getMouseEventClick(e.nativeEvent);
+            this.props.getMouseEventClick(e);
         }
         //pass click event data back to parent 
     }
@@ -116,7 +152,7 @@ export default class Node extends Component {
                 data-parent={this.props.nodeParent}
                 data-siblings={this.props.nodeSiblings? this.props.nodeSiblings.join(','): ''} 
                 ref={this.nodeHolder}
-                onClick={this.popupMenu}
+                // onClick={this.popupMenu}
                 x={this.props.x ? this.props.x : 0}   
                 y={this.props.y ? this.props.y : 0}
             > 
