@@ -166,13 +166,13 @@ export default class PopupMenu extends Component {
 
     componentDidMount() {
         this.updateWindowDimensions();
-        document.addEventListener('resize', this.updateWindowDimensions);
+        window.addEventListener('resize', this.updateWindowDimensions);
         document.addEventListener("keydown",this.keyDownHandler);
         document.addEventListener("click",this.clickHandler);
     }
 
     componentWillUnmount() {
-        document.removeEventListener('resize', this.updateWindowDimensions);
+        window.removeEventListener('resize', this.updateWindowDimensions);
         document.removeEventListener("keydown", this.keyDownHandler);
         document.removeEventListener("click", this.clickHandler);
     }

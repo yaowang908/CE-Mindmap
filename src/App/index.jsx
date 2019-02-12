@@ -157,7 +157,7 @@ class App extends Component {
             this.setState({
                 SVGChildren: new_SVGChildren,
                 SVGChildrenNum: this.state.SVGChildrenNum + 1,
-                level_1_breakingIndex: Math.ceil(new_SVGChildren.length / 2)
+                level_1_breakingIndex: Math.ceil(new_SVGChildren.filter(node=>node.class==='level_1').length / 2)
             })
 
             this.setCookie('SVGChildren',JSON.stringify(new_SVGChildren));
