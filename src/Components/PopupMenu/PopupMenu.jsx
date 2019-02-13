@@ -139,13 +139,10 @@ export default class PopupMenu extends Component {
         let textHolder = callerNode.children[1].children[0];
         let formerText = textHolder.textContent;//get text content of this caller SVG node
         let userInput = formerText ? formerText : '';
-        console.dir(e);
 
         if ((e.type === 'click') 
                 && e.target.id === 'mind_map' 
                 && editor === document.activeElement) {
-            console.log('click fired!');
-            console.dir(e);
             userInput = editor.value ? editor.value : userInput;
 
             this.props.getNewNodeContent(userInput, this.state.callerInfo);

@@ -5,7 +5,7 @@ export function startDrag(event) {
     let that = this;
     //startDrag
     if (event.path[1].classList && event.path[1].classList.contains('draggable')) {
-        console.log('draggable');
+        // console.log('draggable');
         that.selectedDraggingElement = event.path[1];
         that.currentMouseDownPosition = [event.clientX,event.clientY];
         if (that.selectedDraggingElement.id !== 'node_1'){
@@ -42,9 +42,7 @@ export function drag(event) {
 
         let deltaX = Number(dragX - currentX);
         let deltaY = Number(dragY - currentY);
-
-        //TODO: if mainNode get dragged, every node should move together
-
+        
         if(that.selectedDraggingElement.id !== 'node_1') {
             if (!(isNaN(deltaX)) && !(isNaN(deltaY))) {
                 that.selectedDraggingElement.setAttributeNS(null, "x", that.currentNodePositionX + deltaX);

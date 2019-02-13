@@ -126,10 +126,9 @@ export default class OtherNodes extends Component {
              *  
              */
         } // end of getBranchNodes()
-
         let _thisBranchNodes = getBranchNodes(element);
 
-        // console.dir(_thisBranchNodes.nodes);
+         console.dir(_thisBranchNodes);
 
         function branchStructure(_obj) {
             if (_obj.nodes) {//if has branch
@@ -157,9 +156,15 @@ export default class OtherNodes extends Component {
                                 y={e.position ? e.position[1] : 0}
                                 key={e.id}>
                                 {
-                                    // console.dir(branchStructure(_obj.children));
+                                    // console.dir(_obj.children)
                                     _obj.children.map(item=>{
-                                        return branchStructure(item);
+                                        if(item.length !== 0) {
+                                            console.log(item.nodes[0].parent);
+                                            console.log(e.id);
+                                            if(item.nodes[0].parent === e.id) {
+                                                return branchStructure(item);
+                                            }
+                                        }  
                                     })
                                 }
                             </Node>;
@@ -168,11 +173,7 @@ export default class OtherNodes extends Component {
                 return false;
             }
         }
-
         return branchStructure(_thisBranchNodes);
-
-       
-
     }
 
     componentWillMount(){
