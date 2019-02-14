@@ -128,12 +128,12 @@ export default class OtherNodes extends Component {
         } // end of getBranchNodes()
         let _thisBranchNodes = getBranchNodes(element);
 
-         console.dir(_thisBranchNodes);
+        //  console.dir(_thisBranchNodes);
 
         function branchStructure(_obj) {
             if (_obj.nodes) {//if has branch
                 // console.dir(_obj)
-                return _obj.nodes.map(e=>{
+                return _obj.nodes.map((e,index)=>{
                     //e = {children:[],
                     //   * class: '',
                     //   * content: '',
@@ -143,8 +143,8 @@ export default class OtherNodes extends Component {
                     //   * siblings: []}
                     return <Node childClassName={e.class}
                                 childID={e.id}
-                                startX={100}//FIXME:
-                                startY={100}//FIXME:
+                                startX={150*e.class.split('_')[1]}//FIXME: change direction base on left or right
+                                startY={150*index}//FIXME:
                                 width={"100"}//original width
                                 height={"50"}//original height
                                 transform={""}
@@ -159,8 +159,6 @@ export default class OtherNodes extends Component {
                                     // console.dir(_obj.children)
                                     _obj.children.map(item=>{
                                         if(item.length !== 0) {
-                                            console.log(item.nodes[0].parent);
-                                            console.log(e.id);
                                             if(item.nodes[0].parent === e.id) {
                                                 return branchStructure(item);
                                             }
