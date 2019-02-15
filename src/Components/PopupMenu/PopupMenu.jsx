@@ -76,12 +76,13 @@ export default class PopupMenu extends Component {
             //when user clicked edit menu
             console.log("Edit");
             let callerNode = document.getElementById(this.state.callerInfo.id);//get the actual node that user clicked on
-            // let newNodeWidth = MenuFunctionEdit(callerNode);
+            callerNode = callerNode.getElementsByTagName('path')[0];
+            console.dir(callerNode);
 
             let editor = document.getElementById("node_text_editor");
             let rect = callerNode.getBoundingClientRect();//get target element position
             // console.dir(rect);
-            let textHolder = callerNode.children[1].children[0];
+            let textHolder = callerNode.parentElement.children[1].children[0];
             let formerText = textHolder.textContent;//get text content of this caller SVG node
 
             editor.setAttribute("value", formerText);
@@ -255,8 +256,17 @@ export default class PopupMenu extends Component {
                 callerInfo: nextProps.callerInfo ? nextProps.callerInfo : this.state.callerInfo,
                 context: _context
             });
-        } else {
+        } else if(_callerClass === "level_1") {
             let _context = creatContextOBJ([false, true, true, false, false, false, false]);
+            this.setState({
+                display: nextProps.display ? nextProps.display : this.state.display,
+                left: nextProps.left ? this.horizontalBorder(nextProps.left) : this.state.left,
+                top: nextProps.top ? this.verticalBorder(nextProps.top) : this.state.top,
+                callerInfo: nextProps.callerInfo ? nextProps.callerInfo : this.state.callerInfo,
+                context: _context
+            });
+        } else {
+            let _context = creatContextOBJ([false, false, false, false, false, false, false]);
             this.setState({
                 display: nextProps.display ? nextProps.display : this.state.display,
                 left: nextProps.left ? this.horizontalBorder(nextProps.left) : this.state.left,
@@ -306,24 +316,29 @@ export default class PopupMenu extends Component {
                 >
                     <Sectors id="popup_menu_1" /* Add Upper */
                         callerID={this.state.context.callerID} 
-                        menuContext={this.state.context.popup_menu_1}></Sectors>
+                        menuContext={this.state.context.popup_menu_1}
+                        addUpper={this.props.addUpper}></Sectors>
                     <Sectors id="popup_menu_2" /* Move Up */
                         transform="rotate(-60,125,125)" 
                         callerID={this.state.context.callerID} 
-                        menuContext={this.state.context.popup_menu_2}></Sectors>
+                        menuContext={this.state.context.popup_menu_2}
+                        moveUp={this.props.moveUp}></Sectors>
                     <Sectors id="popup_menu_3" /* Add sibling */
                         transform="rotate(-120,125,125)" 
                         callerID={this.state.context.callerID} 
-                        menuContext={this.state.context.popup_menu_3}></Sectors>
+                        menuContext={this.state.context.popup_menu_3}
+                        addSibling={this.props.addSibling}></Sectors>
                     <Sectors id="popup_menu_4" /* DELETE */
                         transform="rotate(-180,125,125)" 
                         fillColor="#f44b42" 
                         callerID={this.state.context.callerID} 
-                        menuContext={this.state.context.popup_menu_4}></Sectors>
+                        menuContext={this.state.context.popup_menu_4}
+                        delete={this.props.delete}></Sectors>
                     <Sectors id="popup_menu_5" /* Move Down */
                         transform="rotate(120,125,125)" 
                         callerID={this.state.context.callerID} 
-                        menuContext={this.state.context.popup_menu_5}></Sectors>
+                        menuContext={this.state.context.popup_menu_5}
+                        moveDown={this.props.moveDown}></Sectors>
                     <Sectors id="popup_menu_6" /* Add Lower */
                         transform="rotate(60,125,125)" 
                         callerID={this.state.context.callerID} 

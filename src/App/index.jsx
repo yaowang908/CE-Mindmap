@@ -28,8 +28,15 @@ const Menu = styled.div`
 class App extends Component {
     constructor(props) {
         super(props);
+        //popup menu function
         this.clickToHidePopupMenu = this.clickToHidePopupMenu.bind(this);
-        this._addChildren = this._addChildren.bind(this);
+        this._addChildren = this._addChildren.bind(this);  //this is addLower
+        this._addUpper = this._addUpper.bind(this);
+        this._moveUp = this._moveUp.bind(this);
+        this._addSibling = this._addSibling.bind(this);
+        this._delete = this._delete.bind(this);
+        this._moveDown = this._moveDown.bind(this);
+        //popup menu function
         this.setCookie = this.setCookie.bind(this);
         this.getCookie = this.getCookie.bind(this);
         this.clearNodes = this.clearNodes.bind(this);
@@ -247,6 +254,30 @@ class App extends Component {
         }
     }
 
+    _addUpper() {
+        console.log('add Upper function');
+    }
+
+    _moveUp() {
+        console.log('move up function');
+
+    }
+
+    _moveDown() {
+        console.log('move down function');
+    }
+
+    _addSibling() {
+        console.log('add sibling function');
+
+    }
+
+    _delete() {
+        console.log('double confirm');
+        console.log('delete function');
+
+    }
+
     render() {
 
         return (
@@ -258,6 +289,11 @@ class App extends Component {
                             callerInfo={this.state.popupMenuCallerInfo}
                             clickToAdd={this._addChildren}
                             getNewNodeContent={this.getNewNodeContent}
+                            addUpper={this._addUpper}
+                            moveUp={this._moveUp}
+                            moveDown={this._moveDown}
+                            addSibling={this._addSibling}
+                            delete={this._delete}
                 ></PopupMenu>
                 <svg
                     id="mind_map"

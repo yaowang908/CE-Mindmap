@@ -31,19 +31,24 @@ export default class Sectors extends Component {
                 //     break;
                 case 'popup_menu_1':
                     console.log("Add upper");
+                    this.props.addUpper(this.state.menuContext);
                     break;
                 case 'popup_menu_2':
                     console.log("Move Up");
+                    this.props.moveUp(this.state.menuContext);
                     break;
                 case 'popup_menu_3':
                     console.log("add sibling");
+                    this.props.addSibling(this.state.menuContext);
                     break;
                 case 'popup_menu_4':
                     console.log("DELETE");
+                    this.props.delete(this.state.menuContext);
                     // TODO: double confirm
                     break;
                 case 'popup_menu_5':
                     console.log("Move Down");
+                    this.props.moveDown(this.state.menuContext);
                     break;
                 case 'popup_menu_6':
                     console.log("Add Lower");
