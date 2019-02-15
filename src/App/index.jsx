@@ -109,7 +109,7 @@ class App extends Component {
     _addChildren(menuContext){
         if (menuContext) {
             /**
-             * 1. store all nodes in SVGChildren, mainNode doesn't belong to here.
+             * 1. store all nodes in SVGChildren.
              * 2. update this.state.SVGChildren when new node added.
              * 3. each node should have id and class, to identify itself in which level.
              * 4. nodes are rendered in <OtherNodes>
@@ -123,13 +123,17 @@ class App extends Component {
              *  callerParent: 
              * }
              */
-            let _thisID = "node_" + (Number(this.state.SVGChildrenNum)+1);//new node ID
+            let _thisID = "node_" + (Number(this.state.SVGChildren[this.state.SVGChildrenNum-1].id.split('_')[1])+1);//new node ID
+            //new id must be largets id num + 1
+            //when delete node , large id remind the same, so if not same id will show up
+
+
             // console.log("svgchildrenNum: "+this.state.SVGChildrenNum);
             // console.log("_thisID: "+_thisID);
             console.log('Before adding child:')
             console.dir(menuContext);
             let _thisCallerSiblings = (menuContext.callerSiblings+'').split(',').slice();//copy array, to avoid edit origin
-            _thisCallerSiblings.push(_thisID);//add this new node to callerChildren
+            _thisCallerSiblings.push(_thisID);//add this new node to siblings
             console.log('Added child:');
             console.dir(_thisCallerSiblings);
 
@@ -145,7 +149,8 @@ class App extends Component {
                 //if _thisParent is an existing node in this list
                 new_SVGChildren = new_SVGChildren.map((node)=>{
                     if(node.id===_thisParent) {
-                        node.children.push(_thisID);
+                        if(node.children) {node.children.push(_thisID);}
+                        else {node['children']=[].push(_thisID);}
                     }
                     return node;
                 });
@@ -158,7 +163,7 @@ class App extends Component {
                 parent: _thisParent,
                 children: [],
                 position:[0,0],
-                content: ''
+                content: 'New Node'
             });
             // console.dir(new_SVGChildren);
             this.setState({
@@ -190,6 +195,17 @@ class App extends Component {
     componentWillMount() {
         let _temp = this.getCookie('SVGChildren') ? this.getCookie('SVGChildren') : this.state.SVGChildren;
         console.dir(_temp);
+        if(_temp.length === 0) {
+            _temp= [{
+                id: "node_1",
+                siblings: [],
+                class: 'mainNode',
+                parent: '',
+                children: [],
+                position: [0, 0],
+                content: 'Main Node'
+            }]
+        }
         this.setState({
             SVGChildren: _temp,
             SVGChildrenNum: _temp.length ? _temp.length : 1 , //if there is no cookie, set SVGChildrenNum = 1
@@ -254,29 +270,180 @@ class App extends Component {
         }
     }
 
-    _addUpper() {
+    _addUpper(menuContext) {
+        if (!menuContext.disable) {
         console.log('add Upper function');
+        console.dir(menuContext);
+        }
     }
 
-    _moveUp() {
+    _moveUp(menuContext) {
+        if (!menuContext.disable) {
         console.log('move up function');
+        console.dir(menuContext);
+        }
 
     }
 
-    _moveDown() {
-        console.log('move down function');
+    _moveDown(menuContext) {
+        if (!menuContext.disable) {
+            console.log('move down function');
+            console.dir(menuContext);
+        }
     }
 
-    _addSibling() {
-        console.log('add sibling function');
+    _addSibling(menuContext) {
+        /**
+         * 1. setup new node 
+         * 2. copy SVGChildren
+         * 3. update siblings & parent=>child
+         * 4. push new node
+         * 5. setState(SVGChildren,num,breakingIndex)
+         * 6. setCookie
+         */
+        if(!menuContext.disable) {
+            console.log('add sibling function');
+            console.dir(menuContext);
+            let _thisID = "node_" + (Number(this.state.SVGChildren[this.state.SVGChildrenNum - 1].id.split('_')[1]) + 1);//new node ID
+            let _thisClass = menuContext.callerClass; //siblings have same class
+            let _thisParent = menuContext.callerParent;
+            let _allSiblingsThisLevel = this.state.SVGChildren.map(
+                x=>{
+                    if(x.class === _thisClass && x.parent === _thisParent){
+                        //only return sibling under same parent node
+                        return x.id;
+                    }
+                }
+                ).filter(x=>x);
+            _allSiblingsThisLevel.push(_thisID);//add to siblings
+            let _newSVGChildren = this.state.SVGChildren.slice();
+            _newSVGChildren = _newSVGChildren.map(node=>{
+                if(node.class === _thisClass && node.parent === _thisParent) {
+                    node.siblings = _allSiblingsThisLevel.filter(x=>{
+                        if(x!==node.id){
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    });
+                    console.dir(node.siblings);
+                } else if (node.id === _thisParent) {
+                    node.children.push(_thisID);
+                }
+                return node;
+            });
 
+            _newSVGChildren.push({
+                id: _thisID,
+                class: _thisClass,
+                children:[],
+                content:'New Node',
+                parent: _thisParent,
+                position: [0,0],
+                siblings: _allSiblingsThisLevel.filter(x => x !== _thisID)
+            })
+
+            this.setState({
+                SVGChildren: _newSVGChildren,
+                SVGChildrenNum: this.state.SVGChildrenNum + 1,
+                level_1_breakingIndex: Math.ceil(_newSVGChildren.filter(node => node.class === 'level_1').length / 2)
+            })
+
+            this.setCookie('SVGChildren', JSON.stringify(_newSVGChildren));
+        }
     }
 
-    _delete() {
-        console.log('double confirm');
-        console.log('delete function');
+    _delete(menuContext) {
+    /**
+     * 1. double confirm
+     * 2. copy SVGChildren
+     * 3. update siblings & parent=>child
+     * 4. delete node
+     * 5. setState(SVGChildren,num,breakingIndex)
+     * 6. setCookie
+     */
+    let that = this;
+        if(!menuContext.disable) {
+            console.log('double confirm');
+            console.log('delete function');
+            console.dir(menuContext);
+            let _thisID = menuContext.callerID;//new node ID
+            let _thisClass = menuContext.callerClass; //siblings have same class
+            let _thisParent = menuContext.callerParent;
+            let _allSiblingsThisLevel = that.state.SVGChildren.map(
+                x => {
+                    if (x.class === _thisClass && x.parent === _thisParent) {
+                        //only return sibling under same parent node
+                        return x.id;
+                    }
+                }
+            ).filter(x => x);
+            let _newSVGChildren = that.state.SVGChildren.slice();
+            let _thisNodeContent = that.state.SVGChildren.map(
+                node=>{
+                    if(node.id===_thisID) {
+                        return node.content;
+                    }
+                }
+            ).filter(x=>x);
+            let doubleConfirm = window.confirm(`Are you sure to delete node: "${_thisNodeContent.join()}"`);
+            
+            let deleteStatusObj = {};
 
-    }
+            if( doubleConfirm ) {
+                //delete node here
+                _allSiblingsThisLevel = _allSiblingsThisLevel.filter(x=> x.id !== _thisID);
+
+                _newSVGChildren = _newSVGChildren.map(node=>{
+                    // if(node.id !== _thisID && node.parent !== _thisID) {//delete node
+                    if(!deleteOrNot(node.id,node.parent)){
+                        if (node.class === _thisClass && node.parent === _thisParent) {
+                            //update siblings
+                            node.siblings = _allSiblingsThisLevel.filter(x => x.id !== node.id);
+                        } else if (node.id === _thisParent) {
+                            //update parent node children property
+                            node.children = node.children.filter(x => x !== node.id);
+                        }
+                        return node;
+                    } 
+                        //TODO: delete second level children and further
+                }).filter(x=>x);
+
+                function deleteOrNot(__thisNodeID,__thisNodeParent) {
+                    if(deleteStatusObj[__thisNodeID]) {//speed up
+                        return deleteStatusObj[__thisNodeID];
+                    } else {
+                        if (__thisNodeID === _thisID) {
+                            //node itself
+                            deleteStatusObj[__thisNodeID] = true;
+                            return true;
+                        } else if (__thisNodeParent === _thisID) {
+                            //node direct children
+                            deleteStatusObj[__thisNodeID] = true;
+                            return true;
+                        } else {
+                            let temp = that.state.SVGChildren.filter(x=>x.id===__thisNodeParent)[0];
+                            if(temp && temp.parent) {
+                                return deleteOrNot(temp.id,temp.parent);
+                            } else {
+                                console.dir(temp);
+                                // return true;
+                            }
+                        }
+                    }
+                }
+                
+                this.setState({
+                    SVGChildren: _newSVGChildren,
+                    SVGChildrenNum: this.state.SVGChildrenNum - 1,
+                    level_1_breakingIndex: Math.ceil(_newSVGChildren.filter(node => node.class === 'level_1').length / 2)
+                })
+
+                this.setCookie('SVGChildren', JSON.stringify(_newSVGChildren));
+
+            }//end of if(doubleconfirm)
+        }//end of if(disable)
+    }// end of delete
 
     render() {
 

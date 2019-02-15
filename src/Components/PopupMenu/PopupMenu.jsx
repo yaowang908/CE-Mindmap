@@ -110,25 +110,27 @@ export default class PopupMenu extends Component {
         let editor = document.getElementById("node_text_editor");
 
         let callerNode = document.getElementById(this.state.callerInfo.id);
-        let textHolder = callerNode.children[1].children[0];
-        let formerText = textHolder.textContent;//get text content of this caller SVG node
-        let userInput = formerText ? formerText : '';
+        if(callerNode) {
+            let textHolder = callerNode.children[1].children[0];
+            let formerText = textHolder.textContent;//get text content of this caller SVG node
+            let userInput = formerText ? formerText : '';
 
-        if((e.code === 'Enter' || e.code === 'NumpadEnter') && editor === document.activeElement) {
-            userInput = editor.value ? editor.value : userInput;
-            //update node width
-            this.props.getNewNodeContent(userInput, this.state.callerInfo);
-            editor.setAttribute(
-                "style", `
+            if ((e.code === 'Enter' || e.code === 'NumpadEnter') && editor === document.activeElement) {
+                userInput = editor.value ? editor.value : userInput;
+                //update node width
+                this.props.getNewNodeContent(userInput, this.state.callerInfo);
+                editor.setAttribute(
+                    "style", `
                 left: 0px;
                 top: 0px;
                 display: none;
                 position: absolute;
                 z-index: 1200;
             `);//hide editor
-            editor.setAttribute("value", '');//empty editor
-            editor.value = '';
-            document.activeElement.blur();
+                editor.setAttribute("value", '');//empty editor
+                editor.value = '';
+                document.activeElement.blur();
+            }
         }
     }
 
@@ -137,29 +139,31 @@ export default class PopupMenu extends Component {
         let editor = document.getElementById("node_text_editor");
 
         let callerNode = document.getElementById(this.state.callerInfo.id);
-        let textHolder = callerNode.children[1].children[0];
-        let formerText = textHolder.textContent;//get text content of this caller SVG node
-        let userInput = formerText ? formerText : '';
+        if(callerNode) {//node could be missing after delelte function fired
+            let textHolder = callerNode.children[1].children[0];
+            let formerText = textHolder.textContent;//get text content of this caller SVG node
+            let userInput = formerText ? formerText : '';
 
-        if ((e.type === 'click') 
-                && e.target.id === 'mind_map' 
+            if ((e.type === 'click')
+                && e.target.id === 'mind_map'
                 && editor === document.activeElement) {
-            userInput = editor.value ? editor.value : userInput;
+                userInput = editor.value ? editor.value : userInput;
 
-            this.props.getNewNodeContent(userInput, this.state.callerInfo);
+                this.props.getNewNodeContent(userInput, this.state.callerInfo);
 
-            editor.setAttribute(
-                "style", `
+                editor.setAttribute(
+                    "style", `
                 left: 0px;
                 top: 0px;
                 display: none;
                 position: absolute;
                 z-index: 1200;
             `);//hide editor
-            editor.setAttribute("value", '');//empty editor
-            editor.value = '';
-            document.activeElement.blur();
-        }
+                editor.setAttribute("value", '');//empty editor
+                editor.value = '';
+                document.activeElement.blur();
+            }
+        } 
     }
 
     componentDidMount() {
