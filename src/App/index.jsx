@@ -306,14 +306,65 @@ class App extends Component {
     }
 
     _moveUp(menuContext) {
+        /**
+         *  all nodes only care about UPPER level
+         *  so only move this node is enough, children will follow
+         *  1. move this node upper level
+         *  2. update upper level siblings
+         *  3. setState
+         *  4. set cookie 
+         */
         if (!menuContext.disable) {
             console.log('move up function');
             console.dir(menuContext);
+            let _thisID = menuContext.callerID;
+            let _thisClass = menuContext.callerClass;
+            let _upperClass = "level_" + (menuContext.callerClass.split('_')[1] - 1);//if menu is not disabled, then class is larger than 1
+            let _thisParent = menuContext.callerParent;
+            let _upperParent = this.state.SVGChildren.map(x=>{
+                if(x.id===_thisParent) {
+                    return x.parent;
+                }
+            }).filter(x=>x).join();
+            let _upperLevelSiblings = this.state.SVGChildren.map(
+                x => {  
+                    if(x.class === _upperClass) {
+                        return x.id;
+                    }
+                }
+            ).filter(x => x);
+            _upperLevelSiblings.push(_thisID);
+            console.dir(_upperLevelSiblings);
+            let _newSVGChildren = this.state.SVGChildren.slice();
+            _newSVGChildren = _newSVGChildren.map(node=>{
+                if(node.id===_thisID) {
+                    node.class = _upperClass;
+                    node.parent = _upperParent;
+                } else if (node.class === _upperClass) {
+                    node.siblings = _upperLevelSiblings.filter(x=>x !== node.id);
+                } 
+                return node;
+            });
+
+            this.setState({
+                SVGChildren: _newSVGChildren,
+                level_1_breakingIndex: Math.ceil(_newSVGChildren.filter(node => node.class === 'level_1').length / 2)
+            })
+
+            this.setCookie('SVGChildren', JSON.stringify(_newSVGChildren));
         }
 
     }
 
     _moveDown(menuContext) {
+        /**
+         *  all nodes only care about UPPER level
+         *  so only move this node is enough, children will follow
+         *  1. move this node lower level
+         *  2. update lower level siblings
+         *  3. setState
+         *  4. set cookie
+         */
         if (!menuContext.disable) {
             console.log('move down function');
             console.dir(menuContext);
