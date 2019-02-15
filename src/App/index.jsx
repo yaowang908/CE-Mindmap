@@ -91,7 +91,6 @@ class App extends Component {
 
     displayPopupMenu(mouseEventClick) {//display popupmenu
         // console.dir(mouseEventClick);
-        //TODO: shouldn't display when drag&drop
         this.setState({
             popupMenuOffsetX: mouseEventClick.offsetX,//clicked position abscissa
             popupMenuOffsetY: mouseEventClick.offsetY,//ordinate
@@ -319,7 +318,7 @@ class App extends Component {
             console.dir(menuContext);
             let _thisID = menuContext.callerID;
             let _thisClass = menuContext.callerClass;
-            let _upperClass = "level_" + (menuContext.callerClass.split('_')[1] - 1);//if menu is not disabled, then class is larger than 1
+            let _upperClass = "level_" + (Number(menuContext.callerClass.split('_')[1]) - 1);//if menu is not disabled, then class is larger than 1
             let _thisParent = menuContext.callerParent;
             let _upperParent = this.state.SVGChildren.map(x=>{
                 if(x.id===_thisParent) {
@@ -367,17 +366,94 @@ class App extends Component {
          *  3. setState
          *  4. set cookie
          */
+        let that = this;
         if (!menuContext.disable) {
             console.log('move down function');
             console.dir(menuContext);
             let _thisID = menuContext.callerID;
             let _thisClass = menuContext.callerClass;
-            let _lowerClass = "level_" + (menuContext.callerClass.split('_')[1] + 1);
+            let _lowerClass = "level_" + (Number(menuContext.callerClass.split('_')[1]) + 1);
             let _thisParent = menuContext.callerParent;
-            let _thisSiblings = menuContext.callerSiblings.split(','); 
-            _thisSiblings = _thisSiblings.filter(x=>x!==_thisID);
-            console.dir(_thisSiblings);
-            let _newSVGChildren = this.state.SVGChildren.slice();
+            let targetNode = '';
+
+            if (menuContext.callerSiblings) {//when node has siblings
+                //if no siblings, move down does't make sense
+                let _thisSiblings = menuContext.callerSiblings.split(',');
+                _thisSiblings = _thisSiblings.filter(x => x !== _thisID);
+                let _newSVGChildren = that.state.SVGChildren.slice();
+                _newSVGChildren.map(node=>{
+                    if (_thisSiblings.includes(node.id)) {
+                        let elmt = document.getElementById(node.id);
+                        elmt.getElementsByTagName('path')[0].setAttribute('fill','rgb(122,66,244)');
+                    }
+                });
+                _thisSiblings.map(
+                    node=>{
+                        document.getElementById(node).addEventListener('click', _setMoveDownTarget,false);
+                    }
+                );
+                function _setMoveDownTarget(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        _newSVGChildren.map(node => {
+                            if (_thisSiblings.includes(node.id)) {
+                                let elmt = document.getElementById(node.id);
+                                elmt.getElementsByTagName('path')[0].setAttribute('fill', 'rgb(115,161,191)');
+                            }
+                        });
+
+                        console.dir(e.path[1].id);
+                        targetNode = e.path[1].id;
+
+                        /**
+                         *  move down node here
+                         */
+                        let _nextSiblings = _newSVGChildren.map(node => {
+                            if (node.parent === targetNode) {
+                                return node.id
+                            }
+                        }).filter(x => x);
+
+                        _newSVGChildren = _newSVGChildren.map(node => {
+                            /**
+                             * 1. update current level siblings and parent children
+                             * 2. update target level siblings and parent children, and parent
+                             */
+                            if (node.id === _thisID) {
+                                //node to be moved
+                                node.class = _lowerClass;
+                                node.parent = targetNode;
+                            } else if (node.class === _thisClass) {
+                                //current level siblings
+                                node.siblings = node.siblings.filter(x => x !== _thisID);
+                            } else if (node.id === _thisParent) {
+                                //current parent
+                                node.children.filter(x => x !== _thisID);
+                            } else if (node.id === targetNode) {
+                                //target level parent
+                                node.children.push(_thisID);
+                            } else if (node.class === _lowerClass) {
+                                //target level siblings
+                                node.siblings = _nextSiblings.filter(x => x !== node.id);
+                            }
+                            return node;
+                        });
+
+                        that.setState({
+                            SVGChildren: _newSVGChildren,
+                            level_1_breakingIndex: Math.ceil(_newSVGChildren.filter(node => node.class === 'level_1').length / 2)
+                        })
+
+                        that.setCookie('SVGChildren', JSON.stringify(_newSVGChildren));
+
+                        _thisSiblings.map(
+                            x => {
+                                document.getElementById(x).removeEventListener('click', _setMoveDownTarget, false);
+                            });
+                        
+                    }//end of _setMoveDownTarget
+                
+            }
         }
     }
 

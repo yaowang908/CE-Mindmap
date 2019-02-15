@@ -90,12 +90,12 @@ export default class OtherNodes extends Component {
     }
 
     draw_lower_level_nodes(element,index,_level_1_breakingIndex) {
-        /** TODO:
+        /** 
          * para: 
          *      1. element is the current node, represent 
          *      2. _level_1_breakingIndex
          *  1. each level_1 node has a branch, contains all lower level children which belong to the node
-         *  2.   
+         *  
          */
         let _direction;
         if (index < _level_1_breakingIndex) {
