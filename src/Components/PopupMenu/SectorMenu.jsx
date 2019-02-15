@@ -30,28 +30,27 @@ export default class Sectors extends Component {
                     //this case is not functioning, edit menu is different from other sector menu, its function is defined in PopupMenu.jsx
                 //     break;
                 case 'popup_menu_1':
-                    console.log("Add upper");
+                    // console.log("Add upper");
                     this.props.addUpper(this.state.menuContext);
                     break;
                 case 'popup_menu_2':
-                    console.log("Move Up");
+                    // console.log("Move Up");
                     this.props.moveUp(this.state.menuContext);
                     break;
                 case 'popup_menu_3':
-                    console.log("add sibling");
+                    // console.log("add sibling");
                     this.props.addSibling(this.state.menuContext);
                     break;
                 case 'popup_menu_4':
-                    console.log("DELETE");
+                    // console.log("DELETE");
                     this.props.delete(this.state.menuContext);
-                    // TODO: double confirm
                     break;
                 case 'popup_menu_5':
-                    console.log("Move Down");
+                    // console.log("Move Down");
                     this.props.moveDown(this.state.menuContext);
                     break;
                 case 'popup_menu_6':
-                    console.log("Add Lower");
+                    // console.log("Add Lower");
                     // console.dir(e.nativeEvent.target);
                     // console.log(this.state.callerID);
                     this.props.clickedOrNot(this.state.menuContext);

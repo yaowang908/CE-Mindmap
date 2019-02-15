@@ -271,16 +271,44 @@ class App extends Component {
     }
 
     _addUpper(menuContext) {
+        /**
+         * addUpper is equal to call addSibling on parent node
+         */
         if (!menuContext.disable) {
-        console.log('add Upper function');
-        console.dir(menuContext);
+            console.log('add Upper function');
+            console.dir(menuContext);
+            let _thisID = "node_" + (Number(this.state.SVGChildren[this.state.SVGChildrenNum - 1].id.split('_')[1]) + 1);//new node ID
+            let _thisClass = "level_"+(menuContext.callerClass.split('_')[1]-1);//if menu is not disabled, then class is larger than 1
+            let _thisParent = menuContext.callerParent;
+            let _newSVGChildren = this.state.SVGChildren.slice();
+            let _callerParent = _newSVGChildren.map(node=>{
+                if (node.id === _thisParent) {
+                    return node.parent;
+                }
+            }).filter(x=>x).join();
+            let _callerSiblings = _newSVGChildren.map(node => {
+                if (node.class === _thisClass) {
+                    return node.id;
+                }
+            }).filter(x=>x);
+            let _thisMenuContext = {
+                callerClass: _thisClass,
+                callerID: _thisParent,
+                callerParent: _callerParent,
+                callerSiblings: _callerSiblings,
+                diable: false
+            }
+
+            this._addSibling(_thisMenuContext);
+
+
         }
     }
 
     _moveUp(menuContext) {
         if (!menuContext.disable) {
-        console.log('move up function');
-        console.dir(menuContext);
+            console.log('move up function');
+            console.dir(menuContext);
         }
 
     }
@@ -326,7 +354,6 @@ class App extends Component {
                             return false;
                         }
                     });
-                    console.dir(node.siblings);
                 } else if (node.id === _thisParent) {
                     node.children.push(_thisID);
                 }
@@ -406,7 +433,6 @@ class App extends Component {
                         }
                         return node;
                     } 
-                        //TODO: delete second level children and further
                 }).filter(x=>x);
 
                 function deleteOrNot(__thisNodeID,__thisNodeParent) {
@@ -426,8 +452,8 @@ class App extends Component {
                             if(temp && temp.parent) {
                                 return deleteOrNot(temp.id,temp.parent);
                             } else {
-                                console.dir(temp);
-                                // return true;
+                                // console.dir(temp);
+                                return false;
                             }
                         }
                     }
