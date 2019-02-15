@@ -9,6 +9,7 @@ export default class OtherNodes extends Component {
         this.level_1_nodes_y_axis = this.level_1_nodes_y_axis.bind(this);
         this.level_1_nodes_siblings = this.level_1_nodes_siblings.bind(this);
         this.draw_lower_level_nodes = this.draw_lower_level_nodes.bind(this);
+        this.lower_level_nodes_siblings = this.lower_level_nodes_siblings.bind(this);
         this.state={
             level_1_breakingIndex: 1
         }
@@ -70,6 +71,22 @@ export default class OtherNodes extends Component {
                 {this.draw_lower_level_nodes(element,index,this.state.level_1_breakingIndex)}
                 </Node>;
         });
+    }
+
+    lower_level_nodes_siblings(element) {
+        return this.props.SVGChildren
+            .filter(node => {
+                if (node.class === element.class && node.parent === element.parent) {
+                    if (node.id !== element.id) {
+                        return true;
+                    }
+                } else {
+                    return false;
+                }
+            })
+            .map(item => {
+                return item.id
+            })
     }
 
     draw_lower_level_nodes(element,index,_level_1_breakingIndex) {
@@ -150,7 +167,7 @@ export default class OtherNodes extends Component {
                                 transform={""}
                                 text={that.props.updateNodeID === e.id ? (that.props.updateNodeContent ? that.props.updateNodeContent : e.content) : (e.content ? e.content : "New Node")}
                                 nodeParent={e.parent}
-                                nodeSiblings={that.level_1_nodes_siblings(e)}
+                                nodeSiblings={that.lower_level_nodes_siblings(e)}
                                 getMouseEventClick={that.props.getMouseEventClick}
                                 x={e.position ? e.position[0] : 0}
                                 y={e.position ? e.position[1] : 0}

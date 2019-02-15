@@ -361,6 +361,8 @@ class App extends Component {
          *  all nodes only care about UPPER level
          *  so only move this node is enough, children will follow
          *  1. move this node lower level
+         *      1. get parent children
+         *      2. get user selection, which children should we move to
          *  2. update lower level siblings
          *  3. setState
          *  4. set cookie
@@ -368,6 +370,14 @@ class App extends Component {
         if (!menuContext.disable) {
             console.log('move down function');
             console.dir(menuContext);
+            let _thisID = menuContext.callerID;
+            let _thisClass = menuContext.callerClass;
+            let _lowerClass = "level_" + (menuContext.callerClass.split('_')[1] + 1);
+            let _thisParent = menuContext.callerParent;
+            let _thisSiblings = menuContext.callerSiblings.split(','); 
+            _thisSiblings = _thisSiblings.filter(x=>x!==_thisID);
+            console.dir(_thisSiblings);
+            let _newSVGChildren = this.state.SVGChildren.slice();
         }
     }
 
