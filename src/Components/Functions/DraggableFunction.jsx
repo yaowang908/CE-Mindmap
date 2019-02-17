@@ -73,18 +73,7 @@ export function drag(event) {
                         }   
                         _thisNodeChildren.map(x => { return _updateChildrenNodesX(x) });
                     }
-                    /**
-                     *  suppose to return something like this
-                     *  {
-                     *      nodes:[],
-                     *      children:{
-                     *              nodes:'',
-                     *              children:{}    
-                     *              }
-                     *  }
-                     *  
-                     */
-                } // end of getBranchNodes()
+                } // end of _updateChildrenNodesX()
 
 
 
@@ -137,14 +126,56 @@ export function endDrag(event) {
 
 
             let _thisSVGChildren = that.state.SVGChildren.slice();
-            _thisSVGChildren.map(element => {
-                if (that.selectedDraggingElement.id === element.id) {
-                    element.position = [x, y];
-                    return element;
+
+            _thisSVGChildren = _setCertainNodePosition(_thisSVGChildren, that.selectedDraggingElement.id ,x,y);
+            // _thisSVGChildren.map(element => {
+            //     if (that.selectedDraggingElement.id === element.id) {
+            //         element.position = [x, y];
+            //         return element;
+            //     } else {
+            //         return element;
+            //     }
+            // });
+
+            //set certain node position
+            function _setCertainNodePosition(_array,_id,_x,_y) {
+                return  _array.map(element => {
+                        if (_id === element.id) {
+                            element.position = [_x, _y];
+                            return element;
+                        } else {
+                            return element;
+                        }
+                    });
+            } 
+
+            //save children node position
+            _setChildrenNodesPosition(that.selectedDraggingElement.id);
+
+            function _setChildrenNodesPosition(_thisNodeID) {
+                //update children nodes direction
+                let _thisNodeChildren = that.state.SVGChildren.map(x => {
+                    if (x.parent === _thisNodeID) {
+                        return x.id
+                    }
+                }).filter(x => x);
+
+                let ___thisNode = document.getElementById(_thisNodeID);
+                let ___currentX = ___thisNode.getAttributeNS(null, "x");
+                let ___currentY = ___thisNode.getAttributeNS(null, "y");
+
+                if (_thisNodeChildren.length === 0) {
+                    _thisSVGChildren = _setCertainNodePosition(_thisSVGChildren, _thisNodeID, ___currentX, ___currentY);
+                    return;//no child
                 } else {
-                    return element;
+                    if (_thisNodeID !== that.selectedDraggingElement.id) {
+                        _thisSVGChildren = _setCertainNodePosition(_thisSVGChildren, _thisNodeID, ___currentX, ___currentY);
+                    }
+                    _thisNodeChildren.map(x => { return _setChildrenNodesPosition(x) });
                 }
-            });
+            } // end of _setChildrenNodesPosition()
+
+
             that._setStateSVGChildren(_thisSVGChildren);
             that.setCookie('SVGChildren', JSON.stringify(_thisSVGChildren));
         } else {//main node dragged
