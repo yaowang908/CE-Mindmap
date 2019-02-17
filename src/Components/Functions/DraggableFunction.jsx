@@ -48,6 +48,46 @@ export function drag(event) {
                 that.selectedDraggingElement.setAttributeNS(null, "x", that.currentNodePositionX + deltaX);
                 that.selectedDraggingElement.setAttributeNS(null, "y", that.currentNodePositionY + deltaY);
 
+                //get selectedDraggingElement x math symbol - or +
+                let __currentX = that.selectedDraggingElement.getAttributeNS(null,"x");
+                let _symbol = __currentX / Math.abs(__currentX);// -1 or +1
+
+                //update children nodes position if node moved acrossed 0, left to right or right to left
+                _updateChildrenNodesX(that.selectedDraggingElement.id);
+
+                function _updateChildrenNodesX(_thisNodeID) {
+                    //update children nodes direction
+                    let _thisNodeChildren = that.state.SVGChildren.map(x=>{
+                            if(x.parent === _thisNodeID) {
+                                return x.id
+                            }
+                        }).filter(x=>x);
+                    let ___thisNode = document.getElementById(_thisNodeID);
+                    let ___currentX = ___thisNode.getAttributeNS(null, "x");
+                    if (_thisNodeChildren.length === 0) {
+                        ___thisNode.setAttributeNS(null, 'x', Math.abs(___currentX) * _symbol);
+                        return ;//no child
+                    } else {
+                        if (_thisNodeID !== that.selectedDraggingElement.id) {
+                            ___thisNode.setAttributeNS(null, 'x', Math.abs(___currentX) * _symbol);
+                        }   
+                        _thisNodeChildren.map(x => { return _updateChildrenNodesX(x) });
+                    }
+                    /**
+                     *  suppose to return something like this
+                     *  {
+                     *      nodes:[],
+                     *      children:{
+                     *              nodes:'',
+                     *              children:{}    
+                     *              }
+                     *  }
+                     *  
+                     */
+                } // end of getBranchNodes()
+
+
+
             } else {
                 //mouse leave node
                 return;

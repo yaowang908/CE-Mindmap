@@ -168,7 +168,6 @@ class App extends Component {
                     return node;
                 });
             }
-            //TODO: calculate correct X!!
             let result = this.updatePosition(_thisClass, _thisParent);
             /**
              * result = {
@@ -319,7 +318,7 @@ class App extends Component {
                 }
             });
 
-            if (_waitingList.length > 1) {
+            if (_waitingList.length >= 1) {
                 let _class = _thisClass;
                 let _parent = _thisParent;
                 let _siblings = _waitingList.map(x => {
@@ -364,7 +363,14 @@ class App extends Component {
                     return node;
                 });
 
-                return [Number(_getPathRect(_parent).width) + 60, _stackHeight / 2 - (_siblings.length * 50 + _getPreviousNodesHeight_sum(_siblings, _siblings.length))]
+                let _parentPositionX = document.getElementById(_parent).getAttribute('x');
+                console.log(Number(_getPathRect(_parent).width) + 60);
+                if(_parentPositionX < 0) {
+                    return [-(Number(_getPathRect(_parent).width) + 60), _stackHeight / 2 - (_siblings.length * 50 + _getPreviousNodesHeight_sum(_siblings, _siblings.length))];
+                } else if (_parentPositionX > 0) {
+                    return [Number(_getPathRect(_parent).width) + 60, _stackHeight / 2 - (_siblings.length * 50 + _getPreviousNodesHeight_sum(_siblings, _siblings.length))];
+
+                }
             }
         }
 
