@@ -34,7 +34,7 @@ export default class Node extends Component {
     }
 
     generatePath() {
-        return `M ${this.state.startX},${this.state.startY}
+        return `m ${this.state.startX},${this.state.startY}
         h ${this.state.width}
         q ${this.state.bezierRelative},0 ${this.state.bezierRelative},${this.state.bezierRelative}
         v ${this.state.height}

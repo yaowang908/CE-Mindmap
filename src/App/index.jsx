@@ -52,6 +52,7 @@ class App extends Component {
         this._preDraggingSVGChildren = [];
         this._setStateSVGChildren = this._setStateSVGChildren.bind(this);
         //end-- drag function
+        this.updatePosition = this.updatePosition.bind(this);
         this.state = {
             popupMenuDisplay: "none",
             popupMenuOffsetX: 0,
@@ -129,12 +130,12 @@ class App extends Component {
 
             // console.log("svgchildrenNum: "+this.state.SVGChildrenNum);
             // console.log("_thisID: "+_thisID);
-            console.log('Before adding child:')
-            console.dir(menuContext);
+            // console.log('Before adding child:')
+            // console.dir(menuContext);
             let _thisCallerSiblings = (menuContext.callerSiblings+'').split(',').slice();//copy array, to avoid edit origin
             _thisCallerSiblings.push(_thisID);//add this new node to siblings
-            console.log('Added child:');
-            console.dir(_thisCallerSiblings);
+            // console.log('Added child:');
+            // console.dir(_thisCallerSiblings);
 
             let _thisClass = menuContext.callerClass === "mainNode" ? 
                                 "level_1" :
@@ -154,6 +155,15 @@ class App extends Component {
                     return node;
                 });
             }
+            //TODO: calculate new node position 
+            let result = this.updatePosition(_thisClass, _thisParent);
+            /**
+             * result = {
+             *  newNodePosition: _newNodePosition,
+             *  newSVGChildren: _newSVGChildren
+             * }
+             */
+            new_SVGChildren = result.newSVGChildren;
             //sibling is stored in node html attribute data-children
             new_SVGChildren.push({
                 id: _thisID,
@@ -161,7 +171,7 @@ class App extends Component {
                 class: _thisClass,
                 parent: _thisParent,
                 children: [],
-                position:[0,0],
+                position:result.newNodePosition,
                 content: 'New Node'
             });
             // console.dir(new_SVGChildren);
@@ -226,10 +236,6 @@ class App extends Component {
         this.mainSVG.removeEventListener("mousemove", drag);
         this.mainSVG.removeEventListener("mouseup", endDrag);
         this.mainSVG.removeEventListener("mouseleave", endDrag);
-    }
-
-    componentDidUpdate(prevProps,prevState,snapshot) {
-        
     }
 
 //update node content
@@ -607,6 +613,120 @@ class App extends Component {
             }//end of if(doubleconfirm)
         }//end of if(disable)
     }// end of delete
+
+    updatePosition(_thisClass, _thisParent) {
+        /**
+         *  calculate new node position
+         */
+        let _newSVGChildren = this.state.SVGChildren.slice();
+
+        let _newNodePosition = _update(_newSVGChildren);
+        
+        // return new node position =>_newNodePosition
+        // update siblings position  =>_newSVGChildren
+
+        return {
+            newNodePosition: _newNodePosition,
+            newSVGChildren: _newSVGChildren
+        };
+
+        function _update(array) {
+            let _waitingList = array.filter(x=>{
+                if(x.id !== 'mainNode' && x.class !== 'level_1') {
+                    //ignore mainNode and level_1 node
+                    return true;
+                } else {
+                    return false;
+                }
+            }); 
+
+            if (_waitingList.length > 1) {
+                let _class = _thisClass;
+                let _parent = _thisParent;
+                let _siblings = array.map(x => {
+                    // siblings doesn't contains node itself
+                    //because it hasn't been added to it
+                    if (x.class === _class && x.parent === _parent) {
+                        return x;//return complete node
+                    }
+                }).filter(x => x);
+                console.dir(_siblings);
+                //siblings and parent contains smallest svg group
+                //for nodes lower than or equal to level_2, all nodes stacked together
+                // node height=50, margin= 50
+                // node is also possible to be svg NODE
+                let _stackHeight = (_siblings.length) * 50; 
+                //init _stackHeight contains all margins
+                //add one more margin for new added node (not yet in the array)
+                _siblings.map(x=>{
+                    _stackHeight += _getSVGRect(x.id).height;
+                });
+                
+                _stackHeight += 50; //new node
+                
+                // assuming parent Node is coordinates [0,0]
+                // assign position:[x,y] to all siblings
+                // stackHeihgt determine y, 
+                // _getRect will help with x
+
+                _siblings = _siblings.map((node,index)=>{
+                    let _y = _stackHeight/2 - (index * 50 + _getPreviousNodesHeight_sum(_siblings,index));//index* margin & previous nodes height
+                    let _x = Number(_getPathRect(_parent).width) + 60;
+                    node.position = [_x,_y];
+                    _newSVGChildren = _newSVGChildren.map(x=>{
+                        if(x.id===node.id) {
+                            return node;
+                        } else {
+                            return x;
+                        }
+                    });
+                    return node;
+                });
+
+                return [Number(_getPathRect(_parent).width) + 60, _stackHeight / 2 - (_siblings.length * 50 + _getPreviousNodesHeight_sum(_siblings, _siblings.length))]
+                // let _sibling_index = _siblings.map(x=>{return x.id});
+
+                // let _array = array.map(elm => {//remove nodes in _siblings and _parent
+                //     if (_sibling_index.includes(elm.id)) {
+                //         //nodes to remove
+                //         // parent node should leave along, 
+                //         //          next round see whole SVG group as one node
+                //     } else {
+                //         return elm;
+                //     }
+                // }).filter(x => x);//remove undefined node
+                // _recursiveUpdate(_array);
+            } 
+        }
+
+        function _getPreviousNodesHeight_sum(_siblings,_currentIndex) {
+            if(_currentIndex===0) {
+                return 0;
+            } else {
+                let heightSum = 0;
+                _siblings.map((node, index) => {
+                    if (index < _currentIndex) {
+                        heightSum += _getSVGRect(node.id).height;
+                    }
+                });
+                console.dir(heightSum);
+                return heightSum;
+            }
+        }
+
+        function _getSVGRect(id) {
+            let _result = document.getElementById(id).getBBox()
+            return _result;
+        }
+
+        function _getPathRect(id) {
+            //all id is assosiated with svg node
+            // return path rect
+            let _svgNode = document.getElementById(id);
+            let _result = _svgNode.getElementsByTagName('path')[0].getBBox()
+            return _result;
+        }
+    }
 
     render() {
 

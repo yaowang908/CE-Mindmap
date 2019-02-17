@@ -56,8 +56,10 @@ export default class OtherNodes extends Component {
             // console.log(element);
             return <Node childClassName={element.class}
                 childID={element.id}
-                startX={this.level_1_nodes_x_axis(index,this.state.level_1_breakingIndex)}
-                startY={this.level_1_nodes_y_axis(index,this.state.level_1_breakingIndex)}
+                // startX={this.level_1_nodes_x_axis(index,this.state.level_1_breakingIndex)}
+                // startY={this.level_1_nodes_y_axis(index,this.state.level_1_breakingIndex)}
+                startX={window.innerWidth / 2}
+                startY={window.innerHeight / 2} //all start from parent node
                 width={"100"}//original width
                 height={"50"}//original height
                 transform={""}
@@ -160,8 +162,8 @@ export default class OtherNodes extends Component {
                     //   * siblings: []}
                     return <Node childClassName={e.class}
                                 childID={e.id}
-                                startX={150*e.class.split('_')[1]}//FIXME: change direction base on left or right
-                                startY={150*index}//FIXME:
+                                startX={window.innerWidth / 2}//change node position with x, y not here!!
+                                startY={window.innerHeight / 2}
                                 width={"100"}//original width
                                 height={"50"}//original height
                                 transform={""}
@@ -202,6 +204,10 @@ export default class OtherNodes extends Component {
         this.setState({
             level_1_breakingIndex: nextProps.level_1_breakingIndex ? nextProps.level_1_breakingIndex : this.state.level_1_breakingIndex
         });
+    }
+
+    componentDidMount() {
+        //to update this comonent, update function should be in parent component
     }
 
     render(){
