@@ -209,9 +209,11 @@ class App extends Component {
         let _newNodePosition;
         if(_thisClass!=='mainNode' && _thisClass !=='level_1'){
             //add lower level node
-            _newNodePosition = _update(_newSVGChildren);
+            _newNodePosition = _update(_newSVGChildren);//update _newSVGChildren inside _update
         } else if(_thisClass === 'level_1') {
-            _newNodePosition = [Number(_getSVGRect('node_1').width) + 60,getLevelOneY()]//TODO: get correct y
+            _newNodePosition = _updateLevelOne();
+            //update _newSVGChildren inside _updateLevelOne()
+            //[Number(_getSVGRect('node_1').width) + 60,y]
         }
 
         
@@ -227,7 +229,7 @@ class App extends Component {
         /**
          *  inner functions
          */
-        function getLevelOneY() {
+        function _updateLevelOne() {
             //when the node to be addde is level_1 node
             let preLevelOneNodes = _newSVGChildren.filter(x=>x.class==='level_1');
             let heightSum = 0;
@@ -237,31 +239,71 @@ class App extends Component {
 
             let _minMargin = 100;//margin is margin between nodes
 
-            console.log(heightSum + (preLevelOneNodes.length + 1) * _minMargin );
+            // console.log(heightSum + (preLevelOneNodes.length + 1) * _minMargin );
+
             if((heightSum + (preLevelOneNodes.length+1)*_minMargin )< window.innerHeight){
+                //previous nodes plus minMargin is shorter than window.innerHeight
                 //add to bottom, right side
-                let _thisMargin = (window.innerHeight - heightSum - 57)/(preLevelOneNodes.length+2); // new node is not in preLevelOneNodes yet, so add 1 more 
+                let _thisMargin = (window.innerHeight - heightSum - 57)/(preLevelOneNodes.length+2); 
+                // new node is not in preLevelOneNodes yet, so add 1 more 
                 //57 is for new added node
                 if(_thisMargin <= _minMargin){
                     _thisMargin = _minMargin
                 } //margin cannot be less than minMargin
 
                 heightSum += (preLevelOneNodes.length+1)*_thisMargin;// added margin to heightSum
+
+                // update previous level_1 node through _newSVGChlildren
+                let _levelOneCounter = 0;
+                _newSVGChildren = _newSVGChildren.map(node=>{
+                    if(node.class==='level_1') {
+                        _levelOneCounter ++;
+                        node.position = [Number(_getSVGRect('node_1').width) + 60,(_levelOneCounter * ( 57 + _thisMargin )- window.innerHeight/2)]
+                        return node;
+                    } else {
+                        return node;
+                    }
+                });
                 
                 if(heightSum< window.innerHeight/2) {
-                    //TODO: update previous level_1 node through _newSVGChlildren
-                    return -(window.innerHeight / 2 - heightSum );
+                    return [Number(_getSVGRect('node_1').width) + 60, -(window.innerHeight / 2 - heightSum )];
                 } else {
-                    return (heightSum - window.innerHeight / 2 );
+                    return [Number(_getSVGRect('node_1').width) + 60, (heightSum - window.innerHeight / 2 )];
                 }
             } else {
+                //previous nodes height sum exceeded window.innerHeight
                 //start over, left side
                 let _tempSum = heightSum + (preLevelOneNodes.length + 1) * _minMargin - window.innerHeight;
+                let _leftSideNodeAmount = Math.ceil(_tempSum/(57+_minMargin))+1;//calculate how many nodes should relocate to left side
+                let _thisMargin = (window.innerHeight - _tempSum -57)/(_leftSideNodeAmount+2);
+                if (_thisMargin <= _minMargin) {
+                    _thisMargin = _minMargin
+                } //margin cannot be less than minMargin
+                _tempSum += (_leftSideNodeAmount+1)*_thisMargin;//add margin to _tempSum
+
+                // update previous level_1 node through _newSVGChlildren
+                let _levelOneCounter = 0;
+                _newSVGChildren = _newSVGChildren.map(node => {
+                    if (node.class === 'level_1') {
+                        _levelOneCounter++;
+                        if (_levelOneCounter > (preLevelOneNodes.length-_leftSideNodeAmount)){
+                            //update left side nodes
+                            console.log((_levelOneCounter - preLevelOneNodes.length + _leftSideNodeAmount) * (57 + _thisMargin));
+
+                            node.position = [-(Number(_getSVGRect('node_1').width) + 60), ((_levelOneCounter - preLevelOneNodes.length + _leftSideNodeAmount) * (57 + _thisMargin) - window.innerHeight / 2)]
+                            return node;
+                        } else {
+                            return node
+                        }
+                    } else {
+                        return node;
+                    }
+                });
 
                 if (_tempSum < window.innerHeight / 2) {
-                    return -(window.innerHeight / 2 - _tempSum - _minMargin);
+                    return [-(Number(_getSVGRect('node_1').width) + 60), _tempSum - (window.innerHeight / 2)];
                 } else {
-                    return (_tempSum - window.innerHeight / 2 + _minMargin);
+                    return [-(Number(_getSVGRect('node_1').width) + 60), _tempSum - (window.innerHeight / 2)];
                 }
             }
 
