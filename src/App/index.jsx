@@ -21,8 +21,17 @@ const Menu = styled.div`
     width: 100px;
     height:25px;
     top: 0;
-    background-color: red;
     z-index:2000;
+    cursor: pointer;
+`;
+
+const MenuItem = styled.div`
+    position: relative;
+    text-align: center;
+    width: 100px;
+    box-sizing: border-box;
+    maring: 0;
+    padding: 0;
 `;
 
 class App extends Component {
@@ -39,7 +48,11 @@ class App extends Component {
         //popup menu function
         this.setCookie = this.setCookie.bind(this);
         this.getCookie = this.getCookie.bind(this);
+
+        //menu function
         this.clearNodes = this.clearNodes.bind(this);
+        this.saveMap = this.saveMap.bind(this);
+
         this.displayPopupMenu = this.displayPopupMenu.bind(this);
         this.getNewNodeContent = this.getNewNodeContent.bind(this);
         this.cookies = new Cookies;
@@ -155,7 +168,7 @@ class App extends Component {
                     return node;
                 });
             }
-            //TODO: calculate new node position 
+            //TODO: calculate correct X!!
             let result = this.updatePosition(_thisClass, _thisParent);
             /**
              * result = {
@@ -178,12 +191,169 @@ class App extends Component {
             this.setState({
                 SVGChildren: new_SVGChildren,
                 SVGChildrenNum: this.state.SVGChildrenNum + 1,
-                level_1_breakingIndex: Math.ceil(new_SVGChildren.filter(node=>node.class==='level_1').length / 2)
+                level_1_breakingIndex: Math.ceil(new_SVGChildren.filter(node=>node.class==='level_1').length / 2),
+                popupMenuDisplay: "none"
             })
 
             this.setCookie('SVGChildren',JSON.stringify(new_SVGChildren));
         }
     }//end of _addChildren
+
+    updatePosition(_thisClass, _thisParent) {
+        /**
+         *  update all other node base on new node appearance
+         *  meanwhile 
+         *  return new node position [x,y]
+         */
+        let _newSVGChildren = this.state.SVGChildren.slice();
+        let _newNodePosition;
+        if(_thisClass!=='mainNode' && _thisClass !=='level_1'){
+            //add lower level node
+            _newNodePosition = _update(_newSVGChildren);
+        } else if(_thisClass === 'level_1') {
+            _newNodePosition = [Number(_getSVGRect('node_1').width) + 60,getLevelOneY()]//TODO: get correct y
+        }
+
+        
+
+        // return new node position =>_newNodePosition
+        // update siblings position  =>_newSVGChildren
+
+        return {//updatePosition function main return
+            newNodePosition: _newNodePosition,
+            newSVGChildren: _newSVGChildren
+        };
+
+        /**
+         *  inner functions
+         */
+        function getLevelOneY() {
+            //when the node to be addde is level_1 node
+            let preLevelOneNodes = _newSVGChildren.filter(x=>x.class==='level_1');
+            let heightSum = 0;
+            preLevelOneNodes.map(node=>{
+                heightSum += document.getElementById(node.id).getBBox().height;
+            });
+
+            let _minMargin = 100;//margin is margin between nodes
+
+            console.log(heightSum + (preLevelOneNodes.length + 1) * _minMargin );
+            if((heightSum + (preLevelOneNodes.length+1)*_minMargin )< window.innerHeight){
+                //add to bottom, right side
+                let _thisMargin = (window.innerHeight - heightSum - 57)/(preLevelOneNodes.length+2); // new node is not in preLevelOneNodes yet, so add 1 more 
+                //57 is for new added node
+                if(_thisMargin <= _minMargin){
+                    _thisMargin = _minMargin
+                } //margin cannot be less than minMargin
+
+                heightSum += (preLevelOneNodes.length+1)*_thisMargin;// added margin to heightSum
+                
+                if(heightSum< window.innerHeight/2) {
+                    //TODO: update previous level_1 node through _newSVGChlildren
+                    return -(window.innerHeight / 2 - heightSum );
+                } else {
+                    return (heightSum - window.innerHeight / 2 );
+                }
+            } else {
+                //start over, left side
+                let _tempSum = heightSum + (preLevelOneNodes.length + 1) * _minMargin - window.innerHeight;
+
+                if (_tempSum < window.innerHeight / 2) {
+                    return -(window.innerHeight / 2 - _tempSum - _minMargin);
+                } else {
+                    return (_tempSum - window.innerHeight / 2 + _minMargin);
+                }
+            }
+
+        }
+
+        function _update(array) {
+            let _waitingList = array.filter(x => {
+                if (x.id !== 'mainNode' && x.class !== 'level_1') {
+                    //ignore mainNode and level_1 node
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            if (_waitingList.length > 1) {
+                let _class = _thisClass;
+                let _parent = _thisParent;
+                let _siblings = _waitingList.map(x => {
+                    // siblings doesn't contains node itself
+                    //because it hasn't been added to it
+                    if (x.class === _class && x.parent === _parent) {
+                        return x;//return complete node
+                    }
+                }).filter(x => x);
+
+                console.dir(_siblings);
+
+                //siblings and parent contains smallest svg group
+                //for nodes lower than or equal to level_2, all nodes stacked together
+                // node height=50, margin= 50
+                // node is also possible to be svg NODE
+                let _stackHeight = (_siblings.length) * 50;
+                //init _stackHeight contains all margins
+                //add one more margin for new added node (not yet in the array)
+                _siblings.map(x => {
+                    _stackHeight += _getSVGRect(x.id).height;
+                });
+
+                _stackHeight += 50; //new node
+
+                // assuming parent Node is coordinates [0,0]
+                // assign position:[x,y] to all siblings
+                // stackHeihgt determine y, 
+                // _getRect will help with x
+
+                _siblings = _siblings.map((node, index) => {
+                    let _y = _stackHeight / 2 - (index * 50 + _getPreviousNodesHeight_sum(_siblings, index));//index* margin & previous nodes height
+                    let _x = Number(_getPathRect(_parent).width) + 60;
+                    node.position = [_x, _y];//update other nodes here
+                    _newSVGChildren = _newSVGChildren.map(x => {
+                        if (x.id === node.id) {
+                            return node;
+                        } else {
+                            return x;
+                        }
+                    });
+                    return node;
+                });
+
+                return [Number(_getPathRect(_parent).width) + 60, _stackHeight / 2 - (_siblings.length * 50 + _getPreviousNodesHeight_sum(_siblings, _siblings.length))]
+            }
+        }
+
+        function _getPreviousNodesHeight_sum(_siblings, _currentIndex) {
+            if (_currentIndex === 0) {
+                return 0;
+            } else {
+                let heightSum = 0;
+                _siblings.map((node, index) => {
+                    if (index < _currentIndex) {
+                        heightSum += _getSVGRect(node.id).height;
+                    }
+                });
+                console.dir(heightSum);
+                return heightSum;
+            }
+        }
+
+        function _getSVGRect(id) {
+            let _result = document.getElementById(id).getBBox()
+            return _result;
+        }
+
+        function _getPathRect(id) {
+            //all id is assosiated with svg node
+            // return path rect
+            let _svgNode = document.getElementById(id);
+            let _result = _svgNode.getElementsByTagName('path')[0].getBBox()
+            return _result;
+        }
+    }// end of update position
 
     setCookie(name,value) {
         this.cookies.set(name,value,{path:'/'});
@@ -353,7 +523,8 @@ class App extends Component {
 
             this.setState({
                 SVGChildren: _newSVGChildren,
-                level_1_breakingIndex: Math.ceil(_newSVGChildren.filter(node => node.class === 'level_1').length / 2)
+                level_1_breakingIndex: Math.ceil(_newSVGChildren.filter(node => node.class === 'level_1').length / 2),
+                popupMenuDisplay: "none",
             })
 
             this.setCookie('SVGChildren', JSON.stringify(_newSVGChildren));
@@ -447,7 +618,8 @@ class App extends Component {
 
                         that.setState({
                             SVGChildren: _newSVGChildren,
-                            level_1_breakingIndex: Math.ceil(_newSVGChildren.filter(node => node.class === 'level_1').length / 2)
+                            level_1_breakingIndex: Math.ceil(_newSVGChildren.filter(node => node.class === 'level_1').length / 2),
+                            popupMenuDisplay: "none",
                         })
 
                         that.setCookie('SVGChildren', JSON.stringify(_newSVGChildren));
@@ -516,7 +688,8 @@ class App extends Component {
             this.setState({
                 SVGChildren: _newSVGChildren,
                 SVGChildrenNum: this.state.SVGChildrenNum + 1,
-                level_1_breakingIndex: Math.ceil(_newSVGChildren.filter(node => node.class === 'level_1').length / 2)
+                level_1_breakingIndex: Math.ceil(_newSVGChildren.filter(node => node.class === 'level_1').length / 2),
+                popupMenuDisplay: "none",
             })
 
             this.setCookie('SVGChildren', JSON.stringify(_newSVGChildren));
@@ -605,7 +778,8 @@ class App extends Component {
                 this.setState({
                     SVGChildren: _newSVGChildren,
                     SVGChildrenNum: this.state.SVGChildrenNum - 1,
-                    level_1_breakingIndex: Math.ceil(_newSVGChildren.filter(node => node.class === 'level_1').length / 2)
+                    level_1_breakingIndex: Math.ceil(_newSVGChildren.filter(node => node.class === 'level_1').length / 2),
+                    popupMenuDisplay: "none",
                 })
 
                 this.setCookie('SVGChildren', JSON.stringify(_newSVGChildren));
@@ -614,125 +788,42 @@ class App extends Component {
         }//end of if(disable)
     }// end of delete
 
-    updatePosition(_thisClass, _thisParent) {
-        /**
-         *  calculate new node position
-         */
-        let _newSVGChildren = this.state.SVGChildren.slice();
+    saveMap() {//FIXME:
+        // saveSvgAsPng(document.getElementById('mind_map_node_container'),'mind-map.png');
 
-        let _newNodePosition = _update(_newSVGChildren);
+        let _svgData = new XMLSerializer().serializeToString(document.getElementById('mind_map_node_container'));
         
-        // return new node position =>_newNodePosition
-        // update siblings position  =>_newSVGChildren
+        //TODO:
+        
+        let _img = document.createElement("img");
+        let _canvas = document.createElement("canvas");
+        let _ctx = _canvas.getContext("2d");
 
-        return {
-            newNodePosition: _newNodePosition,
-            newSVGChildren: _newSVGChildren
-        };
+        _img.setAttribute("src","data:image/svg+xml;charset=utf8,"+encodeURIComponent(_svgData));
+        _img.onload = function() {
+            _ctx.drawImage(_img,0,0);
 
-        function _update(array) {
-            let _waitingList = array.filter(x=>{
-                if(x.id !== 'mainNode' && x.class !== 'level_1') {
-                    //ignore mainNode and level_1 node
-                    return true;
-                } else {
-                    return false;
-                }
-            }); 
+            console.log(_canvas.toDataURL("image/png"));
 
-            if (_waitingList.length > 1) {
-                let _class = _thisClass;
-                let _parent = _thisParent;
-                let _siblings = array.map(x => {
-                    // siblings doesn't contains node itself
-                    //because it hasn't been added to it
-                    if (x.class === _class && x.parent === _parent) {
-                        return x;//return complete node
-                    }
-                }).filter(x => x);
-                console.dir(_siblings);
-                //siblings and parent contains smallest svg group
-                //for nodes lower than or equal to level_2, all nodes stacked together
-                // node height=50, margin= 50
-                // node is also possible to be svg NODE
-                let _stackHeight = (_siblings.length) * 50; 
-                //init _stackHeight contains all margins
-                //add one more margin for new added node (not yet in the array)
-                _siblings.map(x=>{
-                    _stackHeight += _getSVGRect(x.id).height;
-                });
-                
-                _stackHeight += 50; //new node
-                
-                // assuming parent Node is coordinates [0,0]
-                // assign position:[x,y] to all siblings
-                // stackHeihgt determine y, 
-                // _getRect will help with x
-
-                _siblings = _siblings.map((node,index)=>{
-                    let _y = _stackHeight/2 - (index * 50 + _getPreviousNodesHeight_sum(_siblings,index));//index* margin & previous nodes height
-                    let _x = Number(_getPathRect(_parent).width) + 60;
-                    node.position = [_x,_y];
-                    _newSVGChildren = _newSVGChildren.map(x=>{
-                        if(x.id===node.id) {
-                            return node;
-                        } else {
-                            return x;
-                        }
-                    });
-                    return node;
-                });
-
-                return [Number(_getPathRect(_parent).width) + 60, _stackHeight / 2 - (_siblings.length * 50 + _getPreviousNodesHeight_sum(_siblings, _siblings.length))]
-                // let _sibling_index = _siblings.map(x=>{return x.id});
-
-                // let _array = array.map(elm => {//remove nodes in _siblings and _parent
-                //     if (_sibling_index.includes(elm.id)) {
-                //         //nodes to remove
-                //         // parent node should leave along, 
-                //         //          next round see whole SVG group as one node
-                //     } else {
-                //         return elm;
-                //     }
-                // }).filter(x => x);//remove undefined node
-                // _recursiveUpdate(_array);
-            } 
+            let _link = document.createElement("a");
+            _link.download = 'mind-map.png';
+            _link.href = _canvas.toDataURL("image/png");
+            document.body.appendChild(_link);
+            _link.click();
+            document.body.removeChild(_link);
         }
 
-        function _getPreviousNodesHeight_sum(_siblings,_currentIndex) {
-            if(_currentIndex===0) {
-                return 0;
-            } else {
-                let heightSum = 0;
-                _siblings.map((node, index) => {
-                    if (index < _currentIndex) {
-                        heightSum += _getSVGRect(node.id).height;
-                    }
-                });
-                console.dir(heightSum);
-                return heightSum;
-            }
-        }
-
-        function _getSVGRect(id) {
-            let _result = document.getElementById(id).getBBox()
-            return _result;
-        }
-
-        function _getPathRect(id) {
-            //all id is assosiated with svg node
-            // return path rect
-            let _svgNode = document.getElementById(id);
-            let _result = _svgNode.getElementsByTagName('path')[0].getBBox()
-            return _result;
-        }
+       
     }
 
     render() {
 
         return (
             <MainContainer>
-                <Menu onClick={this.clearNodes}> Clear Nodes </Menu>
+                <Menu > 
+                    <MenuItem onClick={this.clearNodes} style={{'backgroundColor':'red'}}>Clear Nodes</MenuItem>
+                    {/* <MenuItem onClick={this.saveMap}>Save</MenuItem>  */}
+                </Menu>
                 <PopupMenu display={this.state.popupMenuDisplay} 
                             left={this.state.popupMenuOffsetX}
                             top={this.state.popupMenuOffsetY}

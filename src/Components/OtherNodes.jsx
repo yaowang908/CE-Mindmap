@@ -17,9 +17,9 @@ export default class OtherNodes extends Component {
 
     level_1_nodes_x_axis(index,_breakingIndex) {
         if(index<_breakingIndex) {
-            return 800;//right arm
+            return 1;//right arm
         } else {
-            return 350;//left arm
+            return -1;//left arm
         }
     }
 
@@ -67,8 +67,8 @@ export default class OtherNodes extends Component {
                 nodeParent={element.parent}
                 nodeSiblings={this.level_1_nodes_siblings(element)}
                 getMouseEventClick={this.props.getMouseEventClick}
-                x = {element.position?element.position[0]:0 }
-                y = {element.position?element.position[1]:0 }
+                x={element.position ? element.position[0] : 0 }
+                y={element.position ? element.position[1] : 0 }
                 key={element.id}>
                 {this.draw_lower_level_nodes(element,index,this.state.level_1_breakingIndex)}
                 </Node>;
