@@ -83,7 +83,7 @@ class App extends Component {
                 parent: '',
                 children: [],
                 position: [0,0],
-                content: 'Main Node'}],
+                content: 'Click me!'}],
             SVGChildrenNum: 1,
             updateNodeID:'',
             updateNodeContent:''
